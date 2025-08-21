@@ -1,0 +1,26 @@
+{
+  "name": "easy-route-backend",
+  "version": "1.0.0",
+  "description": "<img width=\"2637\" height=\"678\" alt=\"Untitled\" src=\"https://github.com/user-attachments/assets/1cca2bc2-0107-44d9-9c05-a01cacdec10f\" />",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "node --watch --inspect --watch-path=./src --trace-warnings ./src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "@fastify/jwt": "^10.0.0",
+    "@fastify/sensible": "^6.0.3",
+    "@fastify/swagger": "^9.5.1",
+    "@prisma/client": "^6.14.0",
+    "dotenv": "^17.2.1",
+    "fastify": "^5.5.0",
+    "heap-js": "^2.6.0",
+    "prisma": "^6.14.0",
+    "yup": "^1.7.0"
+  }
+}
