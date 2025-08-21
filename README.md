@@ -160,12 +160,13 @@ Para manter o projeto organizado e consistente, siga as seguintes práticas ao c
 | Débito técnico / refatoração | `debt/0000`       | `debt/9876`    |
 | Correção urgente             | `hotfix/0000`     | `hotfix/1234`  |
 
-> O número `0000` é opcional, mas pode ser usado para associar a uma issue ou tarefa.
+> O número `0000` pode ser usado para associar a uma issue ou tarefa.
 
 ### 2️⃣ Realizar as alterações
 
 - Faça commits claros e descritivos.
 - Separe commits por responsabilidade (uma mudança = um commit).
+> ⚠️ **Atenção:** Certifique-se de não commitar na branch errada ou subir arquivos que não deveria. Ex: .env.
 
 ### 3️⃣ Abrir um Pull Request (PR)
 
