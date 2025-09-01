@@ -13,3 +13,116 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  password_hash String
+  phone         String?
+  role          Role      @default(PASSENGER)
+  created_at    DateTime  @default(now())
+
+  vans          Van[]     @relation("UserVans")    
+  bookings      Booking[]                         
+}
+
+model Van {
+  id        Int      @id @default(autoincrement())
+  plate     String   @unique
+  model     String
+  capacity  Int
+  is_active Boolean  @default(true)
+  created_at DateTime @default(now())
+
+  owner_id Int
+  owner    User     @relation("UserVans", fields: [owner_id], references: [id])
+
+  routes   Route[]  
+}
+
+model Route {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String?
+  pickup_type  PickupType
+  start_latitude  Decimal
+  start_longitude Decimal
+  end_latitude    Decimal
+  end_longitude   Decimal
+  base_price   Decimal
+  is_active    Boolean @default(true)
+
+  van_id Int
+  van    Van    @relation(fields: [van_id], references: [id])
+
+  stop_points StopPoint[]
+  trips       Trip[]
+}
+
+model StopPoint {
+  id             Int     @id @default(autoincrement())
+  sequence_order Int
+  latitude       Decimal
+  longitude      Decimal
+  description    String?
+
+  route_id Int
+  route    Route  @relation(fields: [route_id], references: [id])
+}
+
+model Trip {
+  id                Int       @id @default(autoincrement())
+  start_time        DateTime
+  estimated_end_time DateTime
+  total_seats       Int
+  available_seats   Int
+  price             Decimal
+  status            TripStatus @default(SCHEDULED)
+
+  route_id Int
+  route    Route     @relation(fields: [route_id], references: [id])
+
+  bookings Booking[]
+}
+
+model Booking {
+  booking_id     Int       @id @default(autoincrement())
+  pickup_latitude  Decimal?
+  pickup_longitude Decimal?
+  status           BookingStatus @default(PENDING)
+  created_at       DateTime @default(now())
+
+  trip_id Int
+  trip    Trip @relation(fields: [trip_id], references: [id])
+
+  user_id Int
+  user    User @relation(fields: [user_id], references: [id])
+}
+
+
+enum Role {
+  PASSENGER
+  OWNER
+  ADMIN
+}
+
+enum PickupType {
+  FIXED
+  FLEXIBLE
+}
+
+enum TripStatus {
+  SCHEDULED
+  ONGOING
+  FINISHED
+  CANCELLED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  FINISHED
+}
