@@ -1,0 +1,9 @@
+export function authMiddleware(app) {
+  app.decorate("authenticate", async function (request, reply) {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.code(401).send({ error: "Unauthorized" });
+    }
+  });
+}

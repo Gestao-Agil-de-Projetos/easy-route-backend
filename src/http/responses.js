@@ -1,60 +1,60 @@
 export default {
-  unauthenticated: (res, message = "Unauthenticated") => {
-    return res.status(401).send({ success: false, message });
+  unauthenticated: (reply, message = "Unauthenticated") => {
+    return reply.code(401).send({ success: false, message });
   },
-  forbidden: (res, message = "Forbidden") => {
-    return res.status(403).send({ success: false, message });
+  forbidden: (reply, message = "Forbidden") => {
+    return reply.code(403).send({ success: false, message });
   },
-  notFound: (res, data = null) => {
-    return res
-      .status(404)
+  notFound: (reply, data = null) => {
+    return reply
+      .code(404)
       .send(data || { success: false, message: "Not Found" });
   },
-  created: (res, data = { success: true, data: true }) => {
-    return res.status(201).send(data || { success: true, message: "Created" });
+  created: (reply, data = { success: true, data: true }) => {
+    return reply.code(201).send(data || { success: true, message: "Created" });
   },
-  unprocessableEntity: (res, data) => {
-    return res.status(422).send(data);
+  unprocessableEntity: (reply, data) => {
+    return reply.code(422).send(data);
   },
-  ok: (res, data) => {
-    return res.status(200).send(data);
+  ok: (reply, data) => {
+    return reply.code(200).send(data);
   },
-  deleted: (res) => {
-    return res.status(204).send();
+  deleted: (reply) => {
+    return reply.code(204).send();
   },
-  badRequest: (res, data) => {
-    return res.status(400).send(data);
+  badRequest: (reply, data) => {
+    return reply.code(400).send(data);
   },
-  conflict: (res, data) => {
-    return res.status(409).send(data);
+  conflict: (reply, data) => {
+    return reply.code(409).send(data);
   },
-  serverError: (res, data) => {
+  serverError: (reply, data) => {
     console.error(data || { success: false, message: "Internal server error" });
-    return res
-      .status(500)
+    return reply
+      .code(500)
       .send(data || { success: false, message: "Internal server error" });
   },
-  internalServerError: (res, data) => {
-    return res
-      .status(500)
+  internalServerError: (reply, data) => {
+    return reply
+      .code(500)
       .send(data || { success: false, message: "Internal server error" });
   },
-  excelFile: (res, filename, buffer) => {
-    res.setHeader(
+  excelFile: (reply, filename, buffer) => {
+    reply.header(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    res.setHeader("Content-Disposition", "attachment; filename=" + filename);
-    return res.end(buffer);
+    reply.header("Content-Disposition", "attachment; filename=" + filename);
+    return reply.send(buffer);
   },
   imageFile: (
-    res,
+    reply,
     fileBuffer,
     mimeType = "image/jpeg",
     cacheTime = "31536000"
   ) => {
-    res.setHeader("Content-Type", mimeType);
-    res.setHeader("Cache-Control", "public, max-age=" + cacheTime);
-    res.send(fileBuffer);
+    reply.header("Content-Type", mimeType);
+    reply.header("Cache-Control", "public, max-age=" + cacheTime);
+    return reply.send(fileBuffer);
   },
 };
