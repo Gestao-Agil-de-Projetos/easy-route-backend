@@ -14,8 +14,6 @@ datasource db {
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
-<<<<<<< Updated upstream
-=======
 
 
 model User {
@@ -24,7 +22,7 @@ model User {
   email         String    @unique
   password_hash String
   phone         String?
-  cpf_cnpj      String?   // campo adicionado, opcional
+  cpf_cnpj      String?   
   role          Role      @default(PASSENGER)
   created_at    DateTime  @default(now())
 
