@@ -1,5 +1,5 @@
 import { vanController } from '../controllers/vanController.js';
-import { checkOwner } from '../middlewares/checkOwner.js';
+import { checkOwner } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
 import { createVanSchema, updateVanSchema } from '../validation/vanValidation.js';
 

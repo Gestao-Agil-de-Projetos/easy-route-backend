@@ -32,6 +32,10 @@ export const vanService = {
       throw new Error('Van não encontrada para atualização.');
     }
 
+    if (vanExists.owner_id !== ownerId) {
+      throw new Error('Permissão negada. Você não é o proprietário desta van.');
+    }
+
     return vanRepository.update(id, data);
   },
 

@@ -1,4 +1,5 @@
 import { vanService } from '../services/vanService.js';
+import http from '../http/responses.js';
 
 export const vanController = {
 
@@ -10,9 +11,9 @@ export const vanController = {
 
       const newVan = await vanService.create(data, ownerId);
 
-      return reply.code(201).send(newVan);
+      return http.created(reply, newVan);
     } catch (error) {
-      return reply.code(400).send({ message: error.message });
+      return http.badRequest(reply, { message: error.message });
     }
   },
 
@@ -21,9 +22,10 @@ export const vanController = {
     try {
       const { id } = request.params;
       const van = await vanService.getById(id);
-      return reply.code(200).send(van);
+      if (!van) return http.notFound(reply);
+      return http.ok(reply, van);
     } catch (error) {
-      return reply.code(404).send({ message: error.message });
+      return http.notFound(reply, { message: error.message });
     }
   },
 
@@ -32,9 +34,9 @@ export const vanController = {
     try {
       const ownerId = request.user.id;
       const vans = await vanService.getAllByOwner(ownerId);
-      return reply.code(200).send(vans);
+      return http.ok(reply, vans);
     } catch (error) {
-      return reply.code(500).send({ message: 'Erro interno do servidor' });
+      return http.serverError(reply, { message: 'Erro interno do servidor' });
     }
   },
 
@@ -46,9 +48,13 @@ export const vanController = {
       const ownerId = request.user.id;
 
       const updatedVan = await vanService.update(id, data, ownerId);
-      return reply.code(200).send(updatedVan);
+      if (!updatedVan) return http.notFound(reply);
+      return http.ok(reply, updatedVan);
     } catch (error) {
-      return reply.code(404).send({ message: error.message });
+      if (error.message && error.message.includes('Permissão negada')) {
+        return http.forbidden(reply, { message: error.message });
+      }
+      return http.notFound(reply, { message: error.message });
     }
   },
 
@@ -60,9 +66,12 @@ export const vanController = {
 
       await vanService.delete(id, ownerId);
 
-      return reply.code(204).send();
+      return http.deleted(reply);
     } catch (error) {
-      return reply.code(404).send({ message: error.message });
+      if (error.message && error.message.includes('Permissão negada')) {
+        return http.forbidden(reply, { message: error.message });
+      }
+      return http.notFound(reply, { message: error.message });
     }
   },
 };
