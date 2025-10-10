@@ -4,23 +4,31 @@ services:
     build: .
     ports:
       - "7000:7000"
+    volumes:
+      - ./prisma/migrations:/usr/src/app/prisma/migrations
     environment:
       - NODE_ENV=development
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:8.1
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: easy_route
-      MYSQL_USER: easy_route
-      MYSQL_PASSWORD: easy_route
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mysql-data:
