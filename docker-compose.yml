@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "7000:7000"
+      - "3000:3000"
     volumes:
       - ./prisma/migrations:/usr/src/app/prisma/migrations
     env_file: .env
