@@ -1,7 +1,7 @@
 import { vanController } from '../controllers/vanController.js';
 import { checkOwner } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
-import { createVanSchema, updateVanSchema } from '../validation/vanValidation.js';
+import { createVanSchema, updateVanSchema } from '../validation/van.js';
 
 export async function vanRoutes(app) {
   app.get(
