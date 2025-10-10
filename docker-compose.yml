@@ -6,8 +6,10 @@ services:
       - "7000:7000"
     volumes:
       - ./prisma/migrations:/usr/src/app/prisma/migrations
+    env_file: .env
     environment:
       - NODE_ENV=development
+      - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
     depends_on:
       db:
         condition: service_healthy
@@ -17,7 +19,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: easy_route
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
