@@ -3,13 +3,12 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "7000:7000"
     volumes:
       - ./prisma/migrations:/usr/src/app/prisma/migrations
     env_file: .env
     environment:
       - NODE_ENV=development
-      # DATABASE_URL is set below to point to the db service inside compose
       - DATABASE_URL=mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
     depends_on:
       - db
