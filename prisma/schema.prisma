@@ -1,19 +1,12 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider        = "mysql"
-  url             = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
-
 
 model User {
   id            Int       @id @default(autoincrement())
@@ -21,45 +14,44 @@ model User {
   email         String    @unique
   password_hash String
   phone         String?
-  cpf_cnpj      String?   
   role          Role      @default(PASSENGER)
   created_at    DateTime  @default(now())
-
-  vans          Van[]     @relation("UserVans")    
-  bookings      Booking[]                         
+  cpf_cnpj      String?
+  bookings      Booking[]
+  vans          Van[]     @relation("UserVans")
 }
 
 model Van {
-  id        Int      @id @default(autoincrement())
-  plate     String   @unique
-  model     String
-  capacity  Int
-  is_active Boolean  @default(true)
+  id         Int      @id @default(autoincrement())
+  plate      String   @unique
+  model      String
+  capacity   Int
+  is_active  Boolean  @default(true)
   created_at DateTime @default(now())
+  owner_id   Int
+  routes     Route[]
+  owner      User     @relation("UserVans", fields: [owner_id], references: [id])
 
-  owner_id Int
-  owner    User     @relation("UserVans", fields: [owner_id], references: [id])
-
-  routes   Route[]  
+  @@index([owner_id], map: "Van_owner_id_fkey")
 }
 
 model Route {
-  id           Int      @id @default(autoincrement())
-  name         String
-  description  String?
-  pickup_type  PickupType
+  id              Int         @id @default(autoincrement())
+  name            String
+  description     String?
+  pickup_type     PickupType
   start_latitude  Decimal
   start_longitude Decimal
   end_latitude    Decimal
   end_longitude   Decimal
-  base_price   Decimal
-  is_active    Boolean @default(true)
+  base_price      Decimal
+  is_active       Boolean     @default(true)
+  van_id          Int
+  van             Van         @relation(fields: [van_id], references: [id])
+  stop_points     StopPoint[]
+  trips           Trip[]
 
-  van_id Int
-  van    Van    @relation(fields: [van_id], references: [id])
-
-  stop_points StopPoint[]
-  trips       Trip[]
+  @@index([van_id], map: "Route_van_id_fkey")
 }
 
 model StopPoint {
@@ -68,40 +60,41 @@ model StopPoint {
   latitude       Decimal
   longitude      Decimal
   description    String?
+  route_id       Int
+  route          Route   @relation(fields: [route_id], references: [id])
 
-  route_id Int
-  route    Route  @relation(fields: [route_id], references: [id])
+  @@index([route_id], map: "StopPoint_route_id_fkey")
 }
 
 model Trip {
-  id                Int       @id @default(autoincrement())
-  start_time        DateTime
+  id                 Int        @id @default(autoincrement())
+  start_time         DateTime
   estimated_end_time DateTime
-  total_seats       Int
-  available_seats   Int
-  price             Decimal
-  status            TripStatus @default(SCHEDULED)
+  total_seats        Int
+  available_seats    Int
+  price              Decimal
+  status             TripStatus @default(SCHEDULED)
+  route_id           Int
+  bookings           Booking[]
+  route              Route      @relation(fields: [route_id], references: [id])
 
-  route_id Int
-  route    Route     @relation(fields: [route_id], references: [id])
-
-  bookings Booking[]
+  @@index([route_id], map: "Trip_route_id_fkey")
 }
 
 model Booking {
-  booking_id     Int       @id @default(autoincrement())
+  booking_id       Int           @id @default(autoincrement())
   pickup_latitude  Decimal?
   pickup_longitude Decimal?
   status           BookingStatus @default(PENDING)
-  created_at       DateTime @default(now())
+  created_at       DateTime      @default(now())
+  trip_id          Int
+  user_id          Int
+  trip             Trip          @relation(fields: [trip_id], references: [id])
+  user             User          @relation(fields: [user_id], references: [id])
 
-  trip_id Int
-  trip    Trip @relation(fields: [trip_id], references: [id])
-
-  user_id Int
-  user    User @relation(fields: [user_id], references: [id])
+  @@index([trip_id], map: "Booking_trip_id_fkey")
+  @@index([user_id], map: "Booking_user_id_fkey")
 }
-
 
 enum Role {
   PASSENGER
