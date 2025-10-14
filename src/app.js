@@ -11,11 +11,15 @@ import { tripRoutes } from "./routes/tripRoutes.js";
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const schemaPath = path.resolve(__dirname, "../prisma/generated/json-schema/json-schema.json");
+const schemaPath = path.resolve(
+  __dirname,
+  "../prisma/generated/json-schema/json-schema.json"
+);
 const prismaSchemas = JSON.parse(readFileSync(schemaPath, "utf8"));
 
 const app = fastify({
@@ -61,5 +65,6 @@ app.register(authRoutes);
 app.register(vanRoutes);
 app.register(routeRoutes);
 app.register(tripRoutes);
+app.register(optimizeRouteRoutes);
 
 export { app };

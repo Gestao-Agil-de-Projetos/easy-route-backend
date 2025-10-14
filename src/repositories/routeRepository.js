@@ -1,4 +1,4 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export const routeRepository = {
   async create(data) {
@@ -19,5 +19,19 @@ export const routeRepository = {
 
   async delete(id) {
     return prisma.route.delete({ where: { id: Number(id) } });
+  },
+
+  async findWithVanAndStopPoints(id) {
+    return await prisma.route.findUnique({
+      where: { id: Number(id) },
+      include: {
+        stop_points: true,
+        van: {
+          include: {
+            owner: true,
+          },
+        },
+      },
+    });
   },
 };
