@@ -12,7 +12,17 @@ export async function tripRoutes(app) {
         200: {
           type: 'array',
           items: {
-            $ref: 'Trip',
+            type: 'object',
+            properties: {
+              id: { type: 'number' },
+              start_time: { type: 'string', format: 'date-time' },
+              estimated_end_time: { type: 'string', format: 'date-time' },
+              total_seats: { type: 'number' },
+              available_seats: { type: 'number' },
+              price: { type: 'number' },
+              status: { type: 'string' },
+              route_id: { type: 'number' },
+            },
           },
         },
       },
@@ -32,7 +42,19 @@ export async function tripRoutes(app) {
         },
       },
       response: {
-        200: { $ref: 'Trip' },
+        200: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+            start_time: { type: 'string', format: 'date-time' },
+            estimated_end_time: { type: 'string', format: 'date-time' },
+            total_seats: { type: 'number' },
+            available_seats: { type: 'number' },
+            price: { type: 'number' },
+            status: { type: 'string' },
+            route_id: { type: 'number' },
+          },
+        },
         404: {
           description: 'Trip not found',
           type: 'object',
@@ -68,7 +90,19 @@ export async function tripRoutes(app) {
         },
       },
       response: {
-        201: { $ref: 'Trip' },
+        201: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+            start_time: { type: 'string', format: 'date-time' },
+            estimated_end_time: { type: 'string', format: 'date-time' },
+            total_seats: { type: 'number' },
+            available_seats: { type: 'number' },
+            price: { type: 'number' },
+            status: { type: 'string' },
+            route_id: { type: 'number' },
+          },
+        },
         400: {
           description: 'Validation error',
           type: 'object',
@@ -103,7 +137,19 @@ export async function tripRoutes(app) {
         },
       },
       response: {
-        200: { $ref: 'Trip' },
+        200: {
+          type: 'object',
+          properties: {
+            id: { type: 'number' },
+            start_time: { type: 'string', format: 'date-time' },
+            estimated_end_time: { type: 'string', format: 'date-time' },
+            total_seats: { type: 'number' },
+            available_seats: { type: 'number' },
+            price: { type: 'number' },
+            status: { type: 'string' },
+            route_id: { type: 'number' },
+          },
+        },
         404: {
           description: 'Trip not found',
           type: 'object',
