@@ -7,6 +7,7 @@ import { authMiddleware } from "./middlewares/auth.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { vanRoutes } from "./routes/vanRoutes.js";
 import { routeRoutes } from "./routes/routeRoutes.js";
+import { tripRoutes } from "./routes/tripRoutes.js";
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -63,6 +64,7 @@ authMiddleware(app);
 app.register(authRoutes);
 app.register(vanRoutes);
 app.register(routeRoutes);
+app.register(tripRoutes);
 app.register(optimizeRouteRoutes);
 
 export { app };
