@@ -1,0 +1,282 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password_hash": {
+          "type": "string"
+        },
+        "phone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "role": {
+          "type": "string",
+          "default": "PASSENGER",
+          "enum": [
+            "PASSENGER",
+            "OWNER",
+            "ADMIN"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "cpf_cnpj": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "bookings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Booking"
+          }
+        },
+        "vans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Van"
+          }
+        }
+      }
+    },
+    "Van": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "plate": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "capacity": {
+          "type": "integer"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "routes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Route"
+          }
+        },
+        "owner": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "Route": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pickup_type": {
+          "type": "string",
+          "enum": [
+            "FIXED",
+            "FLEXIBLE"
+          ]
+        },
+        "start_latitude": {
+          "type": "number"
+        },
+        "start_longitude": {
+          "type": "number"
+        },
+        "end_latitude": {
+          "type": "number"
+        },
+        "end_longitude": {
+          "type": "number"
+        },
+        "base_price": {
+          "type": "number"
+        },
+        "is_active": {
+          "type": "boolean",
+          "default": true
+        },
+        "van": {
+          "$ref": "#/definitions/Van"
+        },
+        "stop_points": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StopPoint"
+          }
+        },
+        "trips": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Trip"
+          }
+        }
+      }
+    },
+    "StopPoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "sequence_order": {
+          "type": "integer"
+        },
+        "latitude": {
+          "type": "number"
+        },
+        "longitude": {
+          "type": "number"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "route": {
+          "$ref": "#/definitions/Route"
+        }
+      }
+    },
+    "Trip": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "start_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "estimated_end_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "total_seats": {
+          "type": "integer"
+        },
+        "available_seats": {
+          "type": "integer"
+        },
+        "price": {
+          "type": "number"
+        },
+        "status": {
+          "type": "string",
+          "default": "SCHEDULED",
+          "enum": [
+            "SCHEDULED",
+            "ONGOING",
+            "FINISHED",
+            "CANCELLED"
+          ]
+        },
+        "bookings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Booking"
+          }
+        },
+        "route": {
+          "$ref": "#/definitions/Route"
+        }
+      }
+    },
+    "Booking": {
+      "type": "object",
+      "properties": {
+        "booking_id": {
+          "type": "integer"
+        },
+        "pickup_latitude": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "pickup_longitude": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "default": "PENDING",
+          "enum": [
+            "PENDING",
+            "CONFIRMED",
+            "CANCELLED",
+            "FINISHED"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "trip": {
+          "$ref": "#/definitions/Trip"
+        },
+        "user": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "user": {
+      "$ref": "#/definitions/User"
+    },
+    "van": {
+      "$ref": "#/definitions/Van"
+    },
+    "route": {
+      "$ref": "#/definitions/Route"
+    },
+    "stopPoint": {
+      "$ref": "#/definitions/StopPoint"
+    },
+    "trip": {
+      "$ref": "#/definitions/Trip"
+    },
+    "booking": {
+      "$ref": "#/definitions/Booking"
+    }
+  }
+}
