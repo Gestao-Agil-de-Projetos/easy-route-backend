@@ -8,7 +8,10 @@ import { authRoutes } from "./routes/authRoutes.js";
 import { vanRoutes } from "./routes/vanRoutes.js";
 import { routeRoutes } from "./routes/routeRoutes.js";
 import { tripRoutes } from "./routes/tripRoutes.js";
+<<<<<<< HEAD
 import stopPointsRoutes from './routes/stopPointsRoutes.js';
+=======
+>>>>>>> 283f2a0167e5d9add7caf17540b739f7a2e53c14
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -67,7 +70,10 @@ app.register(vanRoutes);
 app.register(routeRoutes);
 app.register(tripRoutes);
 app.register(optimizeRouteRoutes);
+<<<<<<< HEAD
 app.register(stopPointsRoutes);
 
+=======
+>>>>>>> 283f2a0167e5d9add7caf17540b739f7a2e53c14
 
 export { app };
