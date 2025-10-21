@@ -41,6 +41,12 @@
             "null"
           ]
         },
+        "cnh": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "bookings": {
           "type": "array",
           "items": {

@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator jsonSchema {
@@ -22,6 +23,7 @@ model User {
   role          Role      @default(PASSENGER)
   created_at    DateTime  @default(now())
   cpf_cnpj      String?
+  cnh           String?
   bookings      Booking[]
   vans          Van[]     @relation("UserVans")
 }

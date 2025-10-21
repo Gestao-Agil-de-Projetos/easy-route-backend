@@ -6,6 +6,7 @@ export async function authRoutes(app) {
   app.post("/register", {
     preHandler: [validate(registerSchema)],
     schema: {
+      summary: 'Registrar novo usuário',
       description: "Registrar novo usuário",
       tags: ["Auth"],
       body: {
@@ -20,6 +21,12 @@ export async function authRoutes(app) {
             type: "string",
             pattern: "^\\d{11}$|^\\d{14}$",
             description: "CPF (11 dígitos) ou CNPJ (14 dígitos)",
+          },
+          cnh: {
+            type: "string",
+            pattern: "^\\d{11}$",
+            nullable: true,
+            description: "Número da CNH (11 dígitos, opcional)",
           },
           role: {
             type: "string",
@@ -45,6 +52,7 @@ export async function authRoutes(app) {
   app.post("/login", {
     preHandler: [validate(loginSchema)],
     schema: {
+      summary: 'Login do usuário',
       description: "Login do usuário",
       tags: ["Auth"],
       body: {

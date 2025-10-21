@@ -5,6 +5,7 @@ export async function optimizeRouteRoutes(app) {
   app.post('/routes/:routeId/optimize', {
     preHandler: [app.authenticate, checkOwner],
     schema: {
+      summary: 'Otimizar a rota com base nas paradas e distâncias',
       description: 'Otimizar a rota com base nas paradas e distâncias',
       tags: ['Optimize-Route'],
       params: {

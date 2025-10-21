@@ -1,7 +1,10 @@
 import bcrypt from "bcrypt";
 
 export const authService = {
-  register: async ({ name, email, password, phone, cpf_cnpj, role }, userRepository, app) => {
+  register: async (
+    { name, email, password, phone, cpf_cnpj, cnh, role },
+    userRepository
+  ) => {
     const existingUser = await userRepository.findByEmail(email);
     if (existingUser) {
       throw new Error("Email already registered");
@@ -14,6 +17,7 @@ export const authService = {
       email,
       phone,
       cpf_cnpj,
+      cnh: role == "OWNER" ? cnh : null,
       role: role || "PASSENGER",
       password_hash: hashedPassword,
     });
