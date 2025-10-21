@@ -8,14 +8,12 @@ import { authRoutes } from "./routes/authRoutes.js";
 import { vanRoutes } from "./routes/vanRoutes.js";
 import { routeRoutes } from "./routes/routeRoutes.js";
 import { tripRoutes } from "./routes/tripRoutes.js";
-<<<<<<< HEAD
-import stopPointsRoutes from './routes/stopPointsRoutes.js';
-=======
->>>>>>> 283f2a0167e5d9add7caf17540b739f7a2e53c14
+import stopPointsRoutes from "./routes/stopPointsRoutes.js";
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
+import bookingRoutes from './routes/bookingRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,10 +68,7 @@ app.register(vanRoutes);
 app.register(routeRoutes);
 app.register(tripRoutes);
 app.register(optimizeRouteRoutes);
-<<<<<<< HEAD
 app.register(stopPointsRoutes);
-
-=======
->>>>>>> 283f2a0167e5d9add7caf17540b739f7a2e53c14
+app.register(bookingRoutes);
 
 export { app };

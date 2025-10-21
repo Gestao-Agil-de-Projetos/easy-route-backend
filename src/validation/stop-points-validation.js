@@ -1,4 +1,4 @@
-// src/validation/stop-points-validation.js
+
 import * as yup from 'yup';
 
 export const stopPointSchema = yup.object({
