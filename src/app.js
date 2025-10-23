@@ -2,21 +2,22 @@ import { fastify } from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
+import fastifyCors from "@fastify/cors";
+import fastifyRateLimit from "@fastify/rate-limit";
+
+import { readFileSync } from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import { envs, isDev } from "./utils/envs.js";
 import { authMiddleware } from "./middlewares/auth.js";
 import { authRoutes } from "./routes/authRoutes.js";
 import { vanRoutes } from "./routes/vanRoutes.js";
 import { routeRoutes } from "./routes/routeRoutes.js";
 import { tripRoutes } from "./routes/tripRoutes.js";
-import stopPointsRoutes from "./routes/stopPointsRoutes.js";
-import { readFileSync } from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import { stopPointsRoutes } from "./routes/stopPointsRoutes.js";
+import { bookingRoutes } from "./routes/bookingRoutes.js";
 import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
-import bookingRoutes from './routes/bookingRoutes.js';
-
-import fastifyCors from "@fastify/cors";
-import fastifyRateLimit from "@fastify/rate-limit";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

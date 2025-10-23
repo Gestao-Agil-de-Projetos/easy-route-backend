@@ -1,13 +1,16 @@
-import { routeController } from '../controllers/routeController.js';
-import { checkOwner } from '../middlewares/auth.js';
-import { validate } from '../middlewares/validate.js';
-import { createRouteSchema, updateRouteSchema } from '../validation/route-validation.js';
+import { routeController } from "../controllers/routeController.js";
+import { checkOwner } from "../middlewares/auth.js";
+import { validate } from "../middlewares/validate.js";
+import {
+  createRouteSchema,
+  updateRouteSchema,
+} from "../validation/route-validation.js";
 
 export async function routeRoutes(app) {
   app.get("/vans/:van_id/routes", {
     preHandler: [app.authenticate],
     schema: {
-      summary: 'Listar rotas de uma van específica',
+      summary: "Listar rotas de uma van específica",
       description: "Listar rotas de uma van específica",
       tags: ["Routes"],
       params: {
@@ -36,7 +39,7 @@ export async function routeRoutes(app) {
   app.get("/routes/:id", {
     preHandler: [app.authenticate],
     schema: {
-      summary: 'Buscar rota pelo ID',
+      summary: "Buscar rota pelo ID",
       description: "Buscar rota pelo ID",
       tags: ["Routes"],
       params: {
@@ -50,7 +53,7 @@ export async function routeRoutes(app) {
   app.post("/routes", {
     preHandler: [app.authenticate, checkOwner, validate(createRouteSchema)],
     schema: {
-      summary: 'Criar nova rota',
+      summary: "Criar nova rota",
       description: "Criar nova rota",
       tags: ["Routes"],
       body: {
@@ -91,10 +94,10 @@ export async function routeRoutes(app) {
     handler: routeController.create,
   });
 
-  app.put("/routes/:id", {
+  app.patch("/routes/:id", {
     preHandler: [app.authenticate, checkOwner, validate(updateRouteSchema)],
     schema: {
-      summary: 'Atualizar rota existente',
+      summary: "Atualizar rota existente",
       description: "Atualizar rota existente",
       tags: ["Routes"],
       params: { type: "object", properties: { id: { type: "number" } } },
@@ -119,7 +122,7 @@ export async function routeRoutes(app) {
   app.delete("/routes/:id", {
     preHandler: [app.authenticate, checkOwner],
     schema: {
-      summary: 'Excluir rota pelo ID',
+      summary: "Excluir rota pelo ID",
       description: "Excluir rota pelo ID",
       tags: ["Routes"],
       params: { type: "object", properties: { id: { type: "number" } } },
