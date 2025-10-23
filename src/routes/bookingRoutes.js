@@ -1,11 +1,10 @@
 import { bookingController } from '../controllers/bookingController.js';
 import { bookingValidation } from '../validation/booking-validation.js';
 import { checkOwner } from '../middlewares/auth.js';
-import { ensureBookingOwner } from '../middlewares/ensureBookingOwner.js';
 
 export default async function bookingRoutes(app) {
   app.post('/bookings', {
-    preHandler: [app.authenticate, bookingValidation],
+    preHandler: [app.authenticate, checkOwner],
     schema: {
       tags: ['Booking'],
       summary: 'Cria um novo booking',
@@ -41,7 +40,7 @@ export default async function bookingRoutes(app) {
   }, bookingController.getById);
 
   app.put('/bookings/:id', {
-    preHandler: [app.authenticate, ensureBookingOwner, bookingValidation],
+    preHandler: [app.authenticate, ensureBookingOwner, checkOwner],
     schema: {
       tags: ['Booking'],
       summary: 'Atualiza um booking existente',
@@ -58,7 +57,7 @@ export default async function bookingRoutes(app) {
   }, bookingController.update);
 
   app.delete('/bookings/:id', {
-    preHandler: [app.authenticate, ensureBookingOwner],
+    preHandler: [app.authenticate, checkOwner],
     schema: {
       tags: ['Booking'],
       summary: 'Deleta booking pelo ID',
