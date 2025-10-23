@@ -8,10 +8,12 @@ import { authRoutes } from "./routes/authRoutes.js";
 import { vanRoutes } from "./routes/vanRoutes.js";
 import { routeRoutes } from "./routes/routeRoutes.js";
 import { tripRoutes } from "./routes/tripRoutes.js";
+import stopPointsRoutes from "./routes/stopPointsRoutes.js";
 import { readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
+import bookingRoutes from './routes/bookingRoutes.js';
 
 import fastifyCors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
@@ -86,5 +88,7 @@ app.register(vanRoutes);
 app.register(routeRoutes);
 app.register(tripRoutes);
 app.register(optimizeRouteRoutes);
+app.register(stopPointsRoutes);
+app.register(bookingRoutes);
 
 export { app };
