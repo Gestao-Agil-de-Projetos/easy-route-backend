@@ -1,9 +1,12 @@
 import { stopPointsRepository } from '../repositories/stopPointsRepository.js';
-import { stopPointSchema } from '../validation/stop-points-validation.js';
+import {
+  createStopPointSchema,
+  updateStopPointSchema,
+} from '../validation/stop-points-validation.js';
 
 export const stopPointsService = {
   async create(data) {
-    await stopPointSchema.validate(data, { abortEarly: false });
+    await createStopPointSchema.validate(data, { abortEarly: false });
     return stopPointsRepository.create(data);
   },
 
@@ -18,7 +21,7 @@ export const stopPointsService = {
   },
 
   async update(id, data) {
-    await stopPointSchema.validate(data, { abortEarly: false });
+    await updateStopPointSchema.validate(data, { abortEarly: false });
     const existing = await stopPointsRepository.findById(id);
     if (!existing) throw new Error('StopPoint não encontrado para atualização.');
     return stopPointsRepository.update(id, data);
