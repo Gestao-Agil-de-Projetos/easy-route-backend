@@ -1,10 +1,10 @@
 import { stopPointsController } from '../controllers/stopPointsController.js';
-import { stopPointsValidation } from '../validation/stop-points-validation.js';
+import { createStopPointSchema, updateStopPointSchema } from '../validation/stop-points-validation.js';
 import { checkOwner } from '../middlewares/auth.js';
 
 export default async function stopPointsRoutes(app) {
   app.post('/stoppoints', {
-    preHandler: [app.authenticate, checkOwner, stopPointsValidation],
+    preHandler: [app.authenticate, checkOwner, createStopPointSchema],
     schema: {
       tags: ['StopPoints'],
       summary: 'Cria um novo ponto de parada',
@@ -43,7 +43,7 @@ export default async function stopPointsRoutes(app) {
   }, stopPointsController.getById);
 
   app.put('/stoppoints/:id', {
-    preHandler: [app.authenticate, checkOwner, stopPointsValidation],
+    preHandler: [app.authenticate, checkOwner, updateStopPointSchema],
     schema: {
       tags: ['StopPoints'],
       summary: 'Atualiza um ponto de parada existente',
