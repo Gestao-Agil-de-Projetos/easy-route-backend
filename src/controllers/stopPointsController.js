@@ -1,28 +1,47 @@
-import { stopPointsService } from '../services/stopPointsService.js';
+import { stopPointsService } from "../services/stopPointsService.js";
+import responses from "../http/responses.js";
 
 export const stopPointsController = {
   async create(req, reply) {
     try {
       const data = req.body;
       const result = await stopPointsService.create(data);
-      reply.code(201).send(result);
+      return responses.created(reply, { success: true, data: result });
     } catch (err) {
-      reply.code(400).send({ error: err.message });
+      return responses.badRequest(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 
   async getAll(req, reply) {
-    const results = await stopPointsService.getAll();
-    reply.send(results);
+    try {
+      const results = await stopPointsService.getAll();
+      return responses.ok(reply, { success: true, data: results });
+    } catch (err) {
+      return responses.serverError(reply, {
+        success: false,
+        message: err.message,
+      });
+    }
   },
 
   async getById(req, reply) {
     try {
       const { id } = req.params;
       const result = await stopPointsService.getById(Number(id));
-      reply.send(result);
+      if (!result)
+        return responses.notFound(reply, {
+          success: false,
+          message: "StopPoint não encontrado",
+        });
+      return responses.ok(reply, { success: true, data: result });
     } catch (err) {
-      reply.code(404).send({ error: err.message });
+      return responses.badRequest(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 
@@ -31,9 +50,16 @@ export const stopPointsController = {
       const { id } = req.params;
       const data = req.body;
       const result = await stopPointsService.update(Number(id), data);
-      reply.send(result);
+      return responses.ok(reply, {
+        success: true,
+        message: "StopPoint atualizado",
+        data: result,
+      });
     } catch (err) {
-      reply.code(400).send({ error: err.message });
+      return responses.badRequest(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 
@@ -41,9 +67,12 @@ export const stopPointsController = {
     try {
       const { id } = req.params;
       await stopPointsService.delete(Number(id));
-      reply.code(204).send();
+      return responses.deleted(reply);
     } catch (err) {
-      reply.code(404).send({ error: err.message });
+      return responses.notFound(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 };
