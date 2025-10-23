@@ -7,6 +7,7 @@ export async function routeRoutes(app) {
   app.get("/vans/:van_id/routes", {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Listar rotas de uma van específica',
       description: "Listar rotas de uma van específica",
       tags: ["Routes"],
       params: {
@@ -35,6 +36,7 @@ export async function routeRoutes(app) {
   app.get("/routes/:id", {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Buscar rota pelo ID',
       description: "Buscar rota pelo ID",
       tags: ["Routes"],
       params: {
@@ -48,6 +50,7 @@ export async function routeRoutes(app) {
   app.post("/routes", {
     preHandler: [app.authenticate, checkOwner, validate(createRouteSchema)],
     schema: {
+      summary: 'Criar nova rota',
       description: "Criar nova rota",
       tags: ["Routes"],
       body: {
@@ -91,6 +94,7 @@ export async function routeRoutes(app) {
   app.put("/routes/:id", {
     preHandler: [app.authenticate, checkOwner, validate(updateRouteSchema)],
     schema: {
+      summary: 'Atualizar rota existente',
       description: "Atualizar rota existente",
       tags: ["Routes"],
       params: { type: "object", properties: { id: { type: "number" } } },
@@ -115,6 +119,7 @@ export async function routeRoutes(app) {
   app.delete("/routes/:id", {
     preHandler: [app.authenticate, checkOwner],
     schema: {
+      summary: 'Excluir rota pelo ID',
       description: "Excluir rota pelo ID",
       tags: ["Routes"],
       params: { type: "object", properties: { id: { type: "number" } } },

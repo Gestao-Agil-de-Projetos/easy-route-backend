@@ -15,6 +15,9 @@ import { fileURLToPath } from "url";
 import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
 import bookingRoutes from './routes/bookingRoutes.js';
 
+import fastifyCors from "@fastify/cors";
+import fastifyRateLimit from "@fastify/rate-limit";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,6 +29,23 @@ const prismaSchemas = JSON.parse(readFileSync(schemaPath, "utf8"));
 
 const app = fastify({
   logger: { level: isDev() ? "info" : "warn" },
+});
+
+await app.register(fastifyCors, {
+  origin: envs.FRONTEND_URL,
+  credentials: true,
+});
+
+await app.register(fastifyRateLimit, {
+  max: 100,
+  timeWindow: "1 minute",
+  ban: 10,
+  errorResponseBuilder: (req, context) => ({
+    statusCode: 429,
+    error: "Too Many Requests",
+    message: `Você atingiu o limite de ${context.max} requisições por minuto. Aguarde e tente novamente.`,
+  }),
+  keyGenerator: (req) => req.ip,
 });
 
 await app.register(fastifySwagger, {

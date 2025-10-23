@@ -6,6 +6,7 @@ export async function tripRoutes(app) {
   app.get('/trips', {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'List all trips',
       description: 'List all trips',
       tags: ['Trip'],
       response: {
@@ -33,6 +34,7 @@ export async function tripRoutes(app) {
   app.get('/trips/:id', {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Get trip by ID',
       description: 'Get trip by ID',
       tags: ['Trip'],
       params: {
@@ -68,6 +70,7 @@ export async function tripRoutes(app) {
   app.post('/trips', {
     preHandler: [app.authenticate, validate(createTripSchema)],
     schema: {
+      summary: 'Create a new trip',
       description: 'Create a new trip',
       tags: ['Trip'],
       body: {
@@ -116,6 +119,7 @@ export async function tripRoutes(app) {
   app.put('/trips/:id', {
     preHandler: [app.authenticate, validate(updateTripSchema)],
     schema: {
+      summary: 'Update a trip',
       description: 'Update a trip',
       tags: ['Trip'],
       params: {
@@ -163,6 +167,7 @@ export async function tripRoutes(app) {
   app.delete('/trips/:id', {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Delete a trip',
       description: 'Delete a trip',
       tags: ['Trip'],
       params: {

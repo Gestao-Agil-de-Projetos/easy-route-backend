@@ -5,7 +5,7 @@ import http from "../http/responses.js";
 export const authController = {
   register: async (request, reply, app) => {
     try {
-      const data = await authService.register(request.body, userRepository, app);
+      const data = await authService.register(request.body, userRepository);
       return http.created(reply, data);
     } catch (err) {
       if (err.name === "ValidationError") {

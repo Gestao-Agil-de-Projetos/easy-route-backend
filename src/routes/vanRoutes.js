@@ -10,6 +10,7 @@ export async function vanRoutes(app) {
   app.get("/vans", {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Listar todas as vans do proprietário',
       description: "Listar todas as vans do proprietário",
       tags: ["Vans"],
       response: {
@@ -33,6 +34,7 @@ export async function vanRoutes(app) {
   app.get("/vans/:id", {
     preHandler: [app.authenticate],
     schema: {
+      summary: 'Buscar van pelo ID',
       description: "Buscar van pelo ID",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
@@ -43,6 +45,7 @@ export async function vanRoutes(app) {
   app.post("/vans", {
     preHandler: [app.authenticate, checkOwner, validate(createVanSchema)],
     schema: {
+      summary: 'Criar nova van',
       description: "Criar nova van",
       tags: ["Vans"],
       body: {
@@ -72,6 +75,7 @@ export async function vanRoutes(app) {
   app.put("/vans/:id", {
     preHandler: [app.authenticate, checkOwner, validate(updateVanSchema)],
     schema: {
+      summary: 'Atualizar dados da van',
       description: "Atualizar dados da van",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
@@ -90,6 +94,7 @@ export async function vanRoutes(app) {
   app.delete("/vans/:id", {
     preHandler: [app.authenticate, checkOwner],
     schema: {
+      summary: 'Excluir van pelo ID',
       description: "Excluir van pelo ID",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
