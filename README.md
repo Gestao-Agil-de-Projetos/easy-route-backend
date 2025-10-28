@@ -160,5 +160,4 @@ Para manter o projeto organizado e consistente, siga as seguintes práticas ao c
 - Evite merge direto na `main` sem PR.
 
 ## 4. Diagrama do Banco de Dados
-
-<img width="100%" alt="Diagrama do Banco de Dados" src="https://github.com/user-attachments/assets/1cca2bc2-0107-44d9-9c05-a01cacdec10f" />
+<img width="1847" height="821" alt="Untitled (1)" src="https://github.com/user-attachments/assets/fc593860-e0db-4f63-a21a-520131c2c0b1" />
