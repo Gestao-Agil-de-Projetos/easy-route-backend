@@ -1,14 +1,38 @@
-version: '3.9'
+version: "3.9"
 
 services:
   mysql:
     image: mysql:8.0
     container_name: app-mysql
+    env_file: .env 
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: primary_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d
+
+  app:
+    build:
+      context: ./easy-route-backend
+      args:
+        NODE_ENV: ${NODE_ENV}
+    container_name: easy-route-backend-app
+    depends_on:
+      - mysql
+    env_file: .env 
+    environment:
+      DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}"
+      SHADOW_DATABASE_URL: "mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/prisma_shadow_db"
+      HOST: "0.0.0.0"
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./prisma/migrations:/usr/src/app/prisma/migrations
+
+volumes:
+  mysql-data:
