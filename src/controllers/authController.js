@@ -1,29 +1,41 @@
 import { userRepository } from "../repositories/userRepository.js";
 import { authService } from "../services/authService.js";
-import http from "../http/responses.js";
+import responses from "../http/responses.js";
 
 export const authController = {
   register: async (request, reply, app) => {
     try {
       const data = await authService.register(request.body, userRepository);
-      return http.created(reply, data);
+      return responses.created(reply, { success: true, data });
     } catch (err) {
       if (err.name === "ValidationError") {
-        return http.unprocessableEntity(reply, { errors: err.errors });
+        return responses.unprocessableEntity(reply, {
+          success: false,
+          errors: err.errors,
+        });
       }
-      return http.badRequest(reply, { error: err.message });
+      return responses.badRequest(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 
   login: async (request, reply, app) => {
     try {
       const data = await authService.login(request.body, userRepository, app);
-      return http.ok(reply, data);
+      return responses.ok(reply, { success: true, data });
     } catch (err) {
       if (err.name === "ValidationError") {
-        return http.unprocessableEntity(reply, { errors: err.errors });
+        return responses.unprocessableEntity(reply, {
+          success: false,
+          errors: err.errors,
+        });
       }
-      return http.unauthenticated(reply, err.message);
+      return responses.unauthenticated(reply, {
+        success: false,
+        message: err.message,
+      });
     }
   },
 };

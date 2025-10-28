@@ -5,10 +5,12 @@ export const bookingController = {
   async create(request, reply) {
     try {
       const data = request.body;
-      const result = await bookingService.create(data);
+      const loggedUser = request.user;
+      const result = await bookingService.create(data, loggedUser);
+
       return responses.created(reply, {
         success: true,
-        message: "Booking criado com sucesso",
+        message: "Booking and StopPoint successfully created",
         data: result,
       });
     } catch (err) {
@@ -22,16 +24,19 @@ export const bookingController = {
           errors,
         });
       }
+
       return responses.internalServerError(reply, {
         success: false,
-        message: err.message || "Erro interno do servidor",
+        message: err.message || "Internal server error",
       });
     }
   },
 
   async getAll(request, reply) {
     try {
-      const result = await bookingService.getAll();
+      const { trip_id } = request.params;
+      const userId = request.user.id;
+      const result = await bookingService.getAll(trip_id, userId);
       return responses.ok(reply, {
         success: true,
         data: result,
@@ -47,12 +52,44 @@ export const bookingController = {
   async getById(request, reply) {
     try {
       const { id } = request.params;
-      const result = await bookingService.getById(Number(id));
+      const user_id = request.user.id;
+
+      const result = await bookingService.getById(Number(id), user_id);
 
       if (!result) {
         return responses.notFound(reply, {
           success: false,
-          message: "Booking não encontrado",
+          message: "Booking not found",
+        });
+      }
+
+      return responses.ok(reply, {
+        success: true,
+        data: result,
+      });
+    } catch (err) {
+      return responses.internalServerError(reply, {
+        success: false,
+        message: err.message,
+      });
+    }
+  },
+
+  async getByUserId(request, reply) {
+    try {
+      const user_id = request.user.id;
+      const { status } = request.query;
+
+      const statuses = status
+        ? status.split(",").map((s) => s.trim().toUpperCase())
+        : null;
+
+      const result = await bookingService.getByUserId(user_id, statuses);
+
+      if (!result || result.length === 0) {
+        return responses.notFound(reply, {
+          success: false,
+          message: "No bookings found",
         });
       }
 
@@ -72,27 +109,14 @@ export const bookingController = {
     try {
       const { id } = request.params;
       const data = request.body;
-      const result = await bookingService.update(Number(id), data);
+      const userId = request.user.id;
+      const result = await bookingService.update(Number(id), data, userId);
 
       return responses.ok(reply, {
         success: true,
-        message: "Booking atualizado com sucesso",
+        message: "Booking successfully updated",
         data: result,
       });
-    } catch (err) {
-      return responses.badRequest(reply, {
-        success: false,
-        message: err.message,
-      });
-    }
-  },
-
-  async remove(request, reply) {
-    try {
-      const { id } = request.params;
-      await bookingService.remove(Number(id));
-
-      return responses.deleted(reply);
     } catch (err) {
       return responses.badRequest(reply, {
         success: false,

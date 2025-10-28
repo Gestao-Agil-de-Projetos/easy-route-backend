@@ -1,35 +1,34 @@
-import { routeRepository } from "../repositories/routeRepository.js";
 import requests from "../http/requests.js";
+import { tripRepository } from "../repositories/tripRepository.js";
 
 export const optimizeRouteService = {
-  async optimize(routeId, ownerId) {
-    const route = await routeRepository.findWithVanAndStopPoints(routeId);
-    if (!route) throw new Error("Rota não encontrada.");
+  async optimize(tripId, ownerId) {
+    const trip = await tripRepository.findWithVanAndStopPoints(tripId);
+    if (!trip) throw new Error("Trip not found.");
 
-    if (route.van.owner_id !== ownerId)
-      throw new Error("Permissão negada. Você não é o proprietário desta van.");
+    if (trip.route.van.owner_id !== ownerId)
+      throw new Error("Permission denied. You are not the owner of this van.");
 
-    const stopPoints = route.stop_points || [];
-    if (stopPoints.length === 0)
-      throw new Error("Rota sem pontos de parada.");
+    const stopPoints = trip.stop_points || [];
+    if (stopPoints.length === 0) throw new Error("Route has no stop points.");
 
-    // Localização inicial e final
+    // Initial and final location
     const start = {
-      location_id: `start_${route.id}`,
-      lat: Number(route.start_latitude),
-      lon: Number(route.start_longitude),
+      location_id: `start_${trip.route.id}`,
+      lat: Number(trip.route.start_latitude),
+      lon: Number(trip.route.start_longitude),
     };
 
     const end = {
-      location_id: `end_${route.id}`,
-      lat: Number(route.end_latitude),
-      lon: Number(route.end_longitude),
+      location_id: `end_${trip.route.id}`,
+      lat: Number(trip.route.end_latitude),
+      lon: Number(trip.route.end_longitude),
     };
 
-    // Montagem dos serviços (paradas)
+    // Building service points (stops)
     const services = stopPoints.map((sp, idx) => ({
       id: `stop_${sp.id}`,
-      name: sp.description || `Parada ${idx + 1}`,
+      name: sp.description || `Stop ${idx + 1}`,
       address: {
         location_id: `addr_${sp.id}`,
         lat: Number(sp.latitude),
@@ -41,7 +40,7 @@ export const optimizeRouteService = {
 
     const vehicles = [
       {
-        vehicle_id: `vehicle_${route.van_id}`,
+        vehicle_id: `vehicle_${trip.route.van_id}`,
         type_id: vehicleTypeId,
         start_address: start,
         end_address: end,
@@ -52,7 +51,7 @@ export const optimizeRouteService = {
       {
         type_id: vehicleTypeId,
         profile: "car",
-        capacity: [route.van.capacity ?? 10],
+        capacity: [trip.route.van.capacity ?? 10],
       },
     ];
 

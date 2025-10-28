@@ -1,33 +1,55 @@
-import { bookingRepository } from '../repositories/bookingRepository.js';
+import { bookingRepository } from "../repositories/bookingRepository.js";
+import { tripRepository } from "../repositories/tripRepository.js";
 
 export const bookingService = {
-  async create(data) {
-    return bookingRepository.create(data);
+  async create(data, loggedUser) {
+    return bookingRepository.createWithStopPoint(data, loggedUser);
   },
 
-  async getById(id) {
+  async getById(id, userId) {
     const booking = await bookingRepository.findById(id);
-    if (!booking) throw new Error('Booking não encontrado.');
+    if (!booking) throw new Error("Booking not found.");
+
+    if (
+      booking.trip.route.van.owner_id !== userId &&
+      booking.user_id !== userId
+    ) {
+      throw new Error("Unauthorized access to booking.");
+    }
+
     return booking;
   },
 
-  async getAll(filter = {}) {
-    return bookingRepository.findAll(filter);
+  async getAll(tripId, ownerId) {
+    const trip = await tripRepository.findById(tripId);
+
+    if (trip.route.van.owner_id !== ownerId) {
+      throw new Error("You are not allowed to view these bookings.");
+    }
+
+    return await bookingRepository.findAll(trip.id);
   },
 
-  async update(id, data) {
+  async getByUserId(user_id, statuses) {
+    return bookingRepository.findByUserId(user_id, statuses);
+  },
+
+  async update(id, data, userId) {
     const existing = await bookingRepository.findById(id);
-    if (!existing) throw new Error('Booking não encontrado para atualização.');
-    return bookingRepository.update(id, data);
-  },
+    if (!existing) throw new Error("Booking not found for update.");
 
-  async remove(id) {
-    const existing = await bookingRepository.findById(id);
-    if (!existing) throw new Error('Booking não encontrado para deleção.');
-    return bookingRepository.delete(id);
-  },
+    if (
+      existing.trip.route.van.owner_id !== userId &&
+      existing.user_id !== userId
+    ) {
+      throw new Error("Unauthorized access to booking.");
+    }
 
-  async getByIdAndUser(id, userId) {
-    return bookingRepository.findByIdAndUser(id, userId);
-  }
+    if (existing.status !== "PENDING") {
+      data = data.status ? { status: data.status } : {};
+    }
+
+    return bookingRepository.updateWithStopPoint(id, data);
+  },
 };
+

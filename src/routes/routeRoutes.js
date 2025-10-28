@@ -7,28 +7,57 @@ import {
 } from "../validation/route-validation.js";
 
 export async function routeRoutes(app) {
-  app.get("/vans/:van_id/routes", {
+  app.get("/routes/:van_id", {
     preHandler: [app.authenticate],
     schema: {
-      summary: "Listar rotas de uma van específica",
-      description: "Listar rotas de uma van específica",
+      summary: "List routes of a specific van",
+      description: "List routes of a specific van",
       tags: ["Routes"],
-      params: {
-        type: "object",
-        properties: { van_id: { type: "number" } },
-      },
+      params: { type: "object", properties: { van_id: { type: "number" } } },
       response: {
         200: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              id: { type: "number" },
-              name: { type: "string" },
-              description: { type: "string" },
-              pickup_type: { type: "string" },
-              base_price: { type: "number" },
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number" },
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  pickup_type: { type: "string", enum: ["FIXED", "FLEXIBLE"] },
+                  start_latitude: { type: "number" },
+                  start_longitude: { type: "number" },
+                  end_latitude: { type: "number" },
+                  end_longitude: { type: "number" },
+                  base_price: { type: "number", minimum: 0 },
+                  van_id: { type: "number" },
+                },
+              },
             },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
           },
         },
       },
@@ -36,15 +65,49 @@ export async function routeRoutes(app) {
     handler: routeController.getAllByVan,
   });
 
-  app.get("/routes/:id", {
+  app.get("/routes/:id/by-id", {
     preHandler: [app.authenticate],
     schema: {
-      summary: "Buscar rota pelo ID",
-      description: "Buscar rota pelo ID",
+      summary: "Get route by ID",
+      description: "Get route by ID",
       tags: ["Routes"],
-      params: {
-        type: "object",
-        properties: { id: { type: "number" } },
+      params: { type: "object", properties: { id: { type: "number" } } },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+                description: { type: "string" },
+                pickup_type: { type: "string", enum: ["FIXED", "FLEXIBLE"] },
+                start_latitude: { type: "number" },
+                start_longitude: { type: "number" },
+                end_latitude: { type: "number" },
+                end_longitude: { type: "number" },
+                base_price: { type: "number", minimum: 0 },
+                van_id: { type: "number" },
+              },
+            },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
       },
     },
     handler: routeController.getById,
@@ -53,21 +116,11 @@ export async function routeRoutes(app) {
   app.post("/routes", {
     preHandler: [app.authenticate, checkOwner, validate(createRouteSchema)],
     schema: {
-      summary: "Criar nova rota",
-      description: "Criar nova rota",
+      summary: "Create a new route",
+      description: "Create a new route",
       tags: ["Routes"],
       body: {
         type: "object",
-        required: [
-          "name",
-          "pickup_type",
-          "start_latitude",
-          "start_longitude",
-          "end_latitude",
-          "end_longitude",
-          "base_price",
-          "van_id",
-        ],
         properties: {
           name: { type: "string" },
           description: { type: "string" },
@@ -84,9 +137,43 @@ export async function routeRoutes(app) {
         201: {
           type: "object",
           properties: {
-            id: { type: "number" },
-            name: { type: "string" },
-            base_price: { type: "number" },
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+                description: { type: "string" },
+                pickup_type: { type: "string", enum: ["FIXED", "FLEXIBLE"] },
+                start_latitude: { type: "number" },
+                start_longitude: { type: "number" },
+                end_latitude: { type: "number" },
+                end_longitude: { type: "number" },
+                base_price: { type: "number", minimum: 0 },
+                van_id: { type: "number" },
+              },
+            },
+          },
+        },
+        400: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
           },
         },
       },
@@ -97,8 +184,8 @@ export async function routeRoutes(app) {
   app.patch("/routes/:id", {
     preHandler: [app.authenticate, checkOwner, validate(updateRouteSchema)],
     schema: {
-      summary: "Atualizar rota existente",
-      description: "Atualizar rota existente",
+      summary: "Update an existing route",
+      description: "Update an existing route",
       tags: ["Routes"],
       params: { type: "object", properties: { id: { type: "number" } } },
       body: {
@@ -115,19 +202,58 @@ export async function routeRoutes(app) {
           van_id: { type: "number" },
         },
       },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                name: { type: "string" },
+                description: { type: "string" },
+                pickup_type: { type: "string", enum: ["FIXED", "FLEXIBLE"] },
+                start_latitude: { type: "number" },
+                start_longitude: { type: "number" },
+                end_latitude: { type: "number" },
+                end_longitude: { type: "number" },
+                base_price: { type: "number", minimum: 0 },
+                van_id: { type: "number" },
+              },
+            },
+          },
+        },
+        400: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+      },
     },
     handler: routeController.update,
-  });
-
-  app.delete("/routes/:id", {
-    preHandler: [app.authenticate, checkOwner],
-    schema: {
-      summary: "Excluir rota pelo ID",
-      description: "Excluir rota pelo ID",
-      tags: ["Routes"],
-      params: { type: "object", properties: { id: { type: "number" } } },
-      response: { 204: { description: "Rota deletada com sucesso" } },
-    },
-    handler: routeController.delete,
   });
 }

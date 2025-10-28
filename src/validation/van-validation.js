@@ -1,13 +1,13 @@
 import * as yup from "yup";
 
 export const createVanSchema = yup.object({
-  plate: yup.string().required("A placa é obrigatória."),
-  model: yup.string().required("O modelo é obrigatório."),
+  plate: yup.string().required("Plate is required."),
+  model: yup.string().required("Model is required."),
   capacity: yup
     .number()
-    .integer("A capacidade deve ser um número inteiro.")
-    .positive("A capacidade deve ser um número positivo.")
-    .required("A capacidade é obrigatória."),
+    .integer("Capacity must be an integer.")
+    .positive("Capacity must be a positive number.")
+    .required("Capacity is required."),
 });
 
 export const updateVanSchema = yup.object({
@@ -15,7 +15,7 @@ export const updateVanSchema = yup.object({
   model: yup.string().optional(),
   capacity: yup
     .number()
-    .integer("A capacidade deve ser um número inteiro.")
-    .positive("A capacidade deve ser um número positivo.")
+    .integer("Capacity must be an integer.")
+    .positive("Capacity must be a positive number.")
     .optional(),
 });

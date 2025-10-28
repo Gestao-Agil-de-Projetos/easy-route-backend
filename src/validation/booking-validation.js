@@ -1,30 +1,31 @@
 import * as yup from "yup";
+import { createStopPointSchema } from "./stop-points-validation.js";
 
 export const createBookingSchema = yup.object({
   userId: yup
     .number()
-    .typeError("userId deve ser um número")
-    .integer("userId deve ser um número inteiro")
-    .required("userId é obrigatório"),
-  routeId: yup
+    .typeError("userId must be a number")
+    .integer("userId must be an integer"),
+
+  tripId: yup
     .number()
-    .typeError("routeId deve ser um número")
-    .integer("routeId deve ser um número inteiro")
-    .required("routeId é obrigatório"),
+    .typeError("tripId must be a number")
+    .integer("tripId must be an integer")
+    .required("tripId is required"),
+
   stopPointId: yup
     .number()
-    .typeError("stopPointId deve ser um número")
-    .integer("stopPointId deve ser um número inteiro")
+    .typeError("stopPointId must be a number")
+    .integer("stopPointId must be an integer")
     .optional(),
-  date: yup
-    .date()
-    .typeError("date deve ser uma data válida (YYYY-MM-DD ou similar)")
-    .required("date é obrigatório"),
+
+  stopPoint: createStopPointSchema.optional(),
+
   status: yup
     .string()
     .oneOf(
       ["PENDING", "CONFIRMED", "CANCELLED", "FINISHED"],
-      "status deve ser um dos seguintes: PENDING, CONFIRMED, CANCELLED ou FINISHED"
+      "status must be one of the following: PENDING, CONFIRMED, CANCELLED, or FINISHED"
     )
     .optional(),
 });
@@ -32,28 +33,29 @@ export const createBookingSchema = yup.object({
 export const updateBookingSchema = yup.object({
   userId: yup
     .number()
-    .typeError("userId deve ser um número")
-    .integer("userId deve ser um número inteiro")
+    .typeError("userId must be a number")
+    .integer("userId must be an integer")
     .optional(),
-  routeId: yup
+
+  tripId: yup
     .number()
-    .typeError("routeId deve ser um número")
-    .integer("routeId deve ser um número inteiro")
+    .typeError("tripId must be a number")
+    .integer("tripId must be an integer")
     .optional(),
+
   stopPointId: yup
     .number()
-    .typeError("stopPointId deve ser um número")
-    .integer("stopPointId deve ser um número inteiro")
+    .typeError("stopPointId must be a number")
+    .integer("stopPointId must be an integer")
     .optional(),
-  date: yup
-    .date()
-    .typeError("date deve ser uma data válida (YYYY-MM-DD ou similar)")
-    .optional(),
+
+  stopPoint: createStopPointSchema.optional(),
+
   status: yup
     .string()
     .oneOf(
       ["PENDING", "CONFIRMED", "CANCELLED", "FINISHED"],
-      "status deve ser um dos seguintes: PENDING, CONFIRMED, CANCELLED ou FINISHED"
+      "status must be one of the following: PENDING, CONFIRMED, CANCELLED, or FINISHED"
     )
     .optional(),
 });

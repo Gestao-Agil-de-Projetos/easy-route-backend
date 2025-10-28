@@ -1,21 +1,50 @@
-import { optimizeRouteController } from '../controllers/optimizeRouteController.js';
-import { checkOwner } from '../middlewares/auth.js';
+import { optimizeRouteController } from "../controllers/optimizeRouteController.js";
+import { checkOwner } from "../middlewares/auth.js";
 
 export async function optimizeRouteRoutes(app) {
-  app.post('/routes/:routeId/optimize', {
+  app.post("/trips/:trip_id/optimize", {
     preHandler: [app.authenticate, checkOwner],
     schema: {
-      summary: 'Otimizar a rota com base nas paradas e distâncias',
-      description: 'Otimizar a rota com base nas paradas e distâncias',
-      tags: ['Optimize-Route'],
+      summary: "Optimize the route based on stops and distances",
+      description: "Optimize the route based on stops and distances",
+      tags: ["Optimize-Route"],
       params: {
-        type: 'object',
-        properties: { routeId: { type: 'number' } },
+        type: "object",
+        properties: { trip_id: { type: "number" } },
+        required: ["trip_id"],
       },
       response: {
         200: {
-          description: 'Rota otimizada retornada com sucesso',
-          solutionId: { type: 'string' },
+          description: "Optimized route returned successfully",
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: { job_id: { type: "string" } },
+            },
+          },
+        },
+        400: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
         },
       },
     },

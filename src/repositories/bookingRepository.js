@@ -1,27 +1,150 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export const bookingRepository = {
-  create(data) {
-    return prisma.booking.create({ data });
+  async createWithStopPoint(data, loggedUser) {
+    const { userId, tripId, stopPoint } = data;
+
+    return prisma.$transaction(async (tx) => {
+      const trip = await tx.trip.findFirst({
+        where: { id: tripId },
+        orderBy: { start_time: "asc" },
+      });
+
+      if (!trip) throw new Error("No trip found for this route.");
+
+      if (trip.available_seats === 0)
+        throw new Error("No more available seats.");
+
+      const booking = await tx.booking.create({
+        data: {
+          user_id: loggedUser.role === "OWNER" ? userId : loggedUser.id,
+          trip_id: trip.id,
+          status: "CONFIRMED", // mocked, no payment validation implemented
+        },
+      });
+
+      const createdStopPoint = await tx.stopPoint.create({
+        data: {
+          latitude: stopPoint.latitude,
+          longitude: stopPoint.longitude,
+          description: stopPoint.description || null,
+          trip_id: trip.id,
+          booking_id: booking.booking_id,
+        },
+      });
+
+      await tx.trip.update({
+        where: { id: booking.trip_id },
+        data: { available_seats: { decrement: 1 } },
+      });
+
+      return { booking, stopPoint: createdStopPoint };
+    });
   },
 
   findById(id) {
-    return prisma.booking.findUnique({ where: { id: Number(id) } });
+    return prisma.booking.findUnique({
+      where: { booking_id: Number(id) },
+      include: {
+        trip: {
+          include: {
+            route: {
+              include: {
+                van: true,
+              },
+            },
+          },
+        },
+      },
+    });
   },
 
-  findAll(filter = {}) {
-    return prisma.booking.findMany({ where: filter, orderBy: { date: 'asc' } });
+  findByUserId(user_id, statuses) {
+    const whereCondition = {
+      user_id: Number(user_id),
+    };
+
+    if (statuses && statuses.length > 0) {
+      whereCondition.status = {
+        in: statuses,
+      };
+    }
+
+    return prisma.booking.findMany({
+      where: whereCondition,
+      include: {
+        trip: {
+          include: {
+            route: {
+              include: {
+                van: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
   },
 
-  update(id, data) {
-    return prisma.booking.update({ where: { id: Number(id) }, data });
+  findAll(tripId) {
+    return prisma.booking.findMany({
+      where: { trip_id: Number(tripId) },
+      include: {
+        user: true,
+        StopPoint: true,
+        trip: {
+          include: {
+            route: true,
+          },
+        },
+      },
+    });
   },
 
-  delete(id) {
-    return prisma.booking.delete({ where: { id: Number(id) } });
-  },
+  async updateWithStopPoint(id, data) {
+    const { stopPoint } = data;
 
-  findByIdAndUser(id, userId) {
-    return prisma.booking.findFirst({ where: { id: Number(id), userId: Number(userId) } });
-  }
+    return prisma.$transaction(async (tx) => {
+      const booking = await tx.booking.findUnique({
+        where: { booking_id: id },
+        include: { trip: true },
+      });
+
+      if (!booking) throw new Error("Booking not found.");
+
+      const trip = booking.trip;
+
+      if (!trip) throw new Error("No trip found.");
+
+      if (booking.status === "CANCELLED" || booking.status === "FINISHED")
+        throw new Error("This booking can no longer be modified.");
+
+      const updatedStopPoint = await tx.stopPoint.updateMany({
+        where: { booking_id: booking.booking_id },
+        data: {
+          latitude: stopPoint.latitude,
+          longitude: stopPoint.longitude,
+          description: stopPoint.description || null,
+        },
+      });
+
+      if (updatedStopPoint.count === 0)
+        throw new Error("No StopPoint found to update.");
+
+      const updatedBooking = await tx.booking.update({
+        where: { booking_id: booking.booking_id },
+        data: {
+          trip_id: data.trip_id,
+        },
+      });
+
+      return {
+        booking: updatedBooking,
+        stopPoint: updatedStopPoint,
+      };
+    });
+  },
 };

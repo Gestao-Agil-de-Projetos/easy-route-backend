@@ -3,30 +3,24 @@ import * as yup from "yup";
 export const createStopPointSchema = yup.object({
   sequence_order: yup
     .number()
-    .typeError("sequence_order deve ser um número")
-    .required("sequence_order é obrigatório"),
+    .typeError("sequence_order must be a number"),
   latitude: yup
     .number()
-    .typeError("latitude deve ser um número")
-    .required("latitude é obrigatório"),
+    .typeError("latitude must be a number")
+    .required("latitude is required"),
   longitude: yup
     .number()
-    .typeError("longitude deve ser um número")
-    .required("longitude é obrigatório"),
+    .typeError("longitude must be a number")
+    .required("longitude is required"),
   description: yup.string().optional(),
-  route_id: yup
-    .number()
-    .typeError("route_id deve ser um número")
-    .required("route_id é obrigatório"),
 });
 
 export const updateStopPointSchema = yup.object({
   sequence_order: yup
     .number()
-    .typeError("sequence_order deve ser um número")
+    .typeError("sequence_order must be a number")
     .optional(),
-  latitude: yup.number().typeError("latitude deve ser um número").optional(),
-  longitude: yup.number().typeError("longitude deve ser um número").optional(),
+  latitude: yup.number().typeError("latitude must be a number").optional(),
+  longitude: yup.number().typeError("longitude must be a number").optional(),
   description: yup.string().optional(),
-  route_id: yup.number().typeError("route_id deve ser um número").optional(),
 });

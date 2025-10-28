@@ -6,7 +6,12 @@ export const routeRepository = {
   },
 
   async findById(id) {
-    return prisma.route.findUnique({ where: { id: Number(id) } });
+    return prisma.route.findUnique({
+      where: { id: Number(id) },
+      include: {
+        van: true,
+      },
+    });
   },
 
   async findAllByVan(vanId) {
@@ -15,23 +20,5 @@ export const routeRepository = {
 
   async update(id, data) {
     return prisma.route.update({ where: { id: Number(id) }, data });
-  },
-
-  async delete(id) {
-    return prisma.route.delete({ where: { id: Number(id) } });
-  },
-
-  async findWithVanAndStopPoints(id) {
-    return await prisma.route.findUnique({
-      where: { id: Number(id) },
-      include: {
-        stop_points: true,
-        van: {
-          include: {
-            owner: true,
-          },
-        },
-      },
-    });
   },
 };

@@ -26,6 +26,8 @@ model User {
   cnh           String?
   bookings      Booking[]
   vans          Van[]     @relation("UserVans")
+
+  Assessment Assessment[]
 }
 
 model Van {
@@ -53,24 +55,11 @@ model Route {
   end_longitude   Decimal
   base_price      Decimal
   is_active       Boolean     @default(true)
-  van_id          Int
-  van             Van         @relation(fields: [van_id], references: [id])
-  stop_points     StopPoint[]
+  van_id          Int?
+  van             Van?         @relation(fields: [van_id], references: [id], onDelete: SetNull)
   trips           Trip[]
 
   @@index([van_id], map: "Route_van_id_fkey")
-}
-
-model StopPoint {
-  id             Int     @id @default(autoincrement())
-  sequence_order Int
-  latitude       Decimal
-  longitude      Decimal
-  description    String?
-  route_id       Int
-  route          Route   @relation(fields: [route_id], references: [id])
-
-  @@index([route_id], map: "StopPoint_route_id_fkey")
 }
 
 model Trip {
@@ -83,24 +72,55 @@ model Trip {
   status             TripStatus @default(SCHEDULED)
   route_id           Int
   bookings           Booking[]
-  route              Route      @relation(fields: [route_id], references: [id])
+  route              Route      @relation(fields: [route_id], references: [id], onDelete: Cascade)
+  stop_points     StopPoint[]
 
   @@index([route_id], map: "Trip_route_id_fkey")
+  Assessment Assessment[]
+}
+
+model StopPoint {
+  id             Int     @id @default(autoincrement())
+  sequence_order Int?
+  latitude       Decimal
+  longitude      Decimal
+  description    String?
+  trip_id       Int
+  booking_id     Int
+  trip          Trip   @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  booking        Booking  @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+
+  @@index([trip_id], map: "StopPoint_trip_id_fkey")
 }
 
 model Booking {
   booking_id       Int           @id @default(autoincrement())
-  pickup_latitude  Decimal?
-  pickup_longitude Decimal?
   status           BookingStatus @default(PENDING)
   created_at       DateTime      @default(now())
   trip_id          Int
   user_id          Int
-  trip             Trip          @relation(fields: [trip_id], references: [id])
-  user             User          @relation(fields: [user_id], references: [id])
+  trip             Trip          @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([trip_id], map: "Booking_trip_id_fkey")
   @@index([user_id], map: "Booking_user_id_fkey")
+  StopPoint StopPoint[]
+}
+
+model Assessment {
+  id        Int      @id @default(autoincrement())
+  rating    Int      @db.TinyInt
+  feedback  String?
+  created_at DateTime @default(now())
+
+  trip_id   Int
+  user_id   Int
+
+  trip      Trip     @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([trip_id])
+  @@index([user_id])
 }
 
 enum Role {

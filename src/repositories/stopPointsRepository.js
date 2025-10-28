@@ -1,33 +1,53 @@
-import { prisma } from '../database/prismaClient.js';
+import { prisma } from "../database/prismaClient.js";
 
 export const stopPointsRepository = {
-  async create(data) {
-    return prisma.stopPoint.create({ data });
-  },
-
-  async findById(id) {
-    return prisma.stopPoint.findUnique({
-      where: { id: Number(id) },
-      include: { route: true }, 
+  async findById(id, userId) {
+    return prisma.stopPoint.findFirst({
+      where: {
+        id: Number(id),
+        OR: [
+          { trip: { route: { van: { owner_id: Number(userId) } } } },
+          { bookings: { some: { user_id: Number(userId) } } },
+        ],
+      },
+      include: {
+        trip: {
+          include: {
+            route: {
+              include: {
+                van: true,
+              },
+            },
+          },
+        },
+        bookings: true,
+      },
     });
   },
 
-  async findAll() {
+  async findAll(tripId, ownerId) {
     return prisma.stopPoint.findMany({
-      include: { route: true }, 
-    });
-  },
-
-  async update(id, data) {
-    return prisma.stopPoint.update({
-      where: { id: Number(id) },
-      data,
-    });
-  },
-
-  async delete(id) {
-    return prisma.stopPoint.delete({
-      where: { id: Number(id) },
+      where: {
+        trip_id: Number(tripId),
+        trip: {
+          route: {
+            van: {
+              owner_id: Number(ownerId),
+            },
+          },
+        },
+      },
+      include: {
+        trip: {
+          include: {
+            route: {
+              include: {
+                van: true,
+              },
+            },
+          },
+        },
+      },
     });
   },
 };

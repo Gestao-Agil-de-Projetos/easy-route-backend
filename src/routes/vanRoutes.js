@@ -8,22 +8,35 @@ import {
 
 export async function vanRoutes(app) {
   app.get("/vans", {
-    preHandler: [app.authenticate],
+    preHandler: [app.authenticate, checkOwner],
     schema: {
-      summary: "Listar todas as vans do proprietário",
-      description: "Listar todas as vans do proprietário",
+      summary: "List all vans of the owner",
+      description: "List all vans of the owner",
       tags: ["Vans"],
       response: {
         200: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              id: { type: "number" },
-              plate: { type: "string" },
-              model: { type: "string" },
-              capacity: { type: "number" },
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "number" },
+                  plate: { type: "string" },
+                  model: { type: "string" },
+                  capacity: { type: "number" },
+                },
+              },
             },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
           },
         },
       },
@@ -31,13 +44,44 @@ export async function vanRoutes(app) {
     handler: vanController.getAllByOwner,
   });
 
-  app.get("/vans/:id", {
+  app.get("/vans/:id/by-id", {
     preHandler: [app.authenticate],
     schema: {
-      summary: "Buscar van pelo ID",
-      description: "Buscar van pelo ID",
+      summary: "Get van by ID",
+      description: "Get van by ID",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                plate: { type: "string" },
+                model: { type: "string" },
+                capacity: { type: "number" },
+              },
+            },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+      },
     },
     handler: vanController.getById,
   });
@@ -45,8 +89,8 @@ export async function vanRoutes(app) {
   app.post("/vans", {
     preHandler: [app.authenticate, checkOwner, validate(createVanSchema)],
     schema: {
-      summary: "Criar nova van",
-      description: "Criar nova van",
+      summary: "Create a new van",
+      description: "Create a new van",
       tags: ["Vans"],
       body: {
         type: "object",
@@ -61,10 +105,37 @@ export async function vanRoutes(app) {
         201: {
           type: "object",
           properties: {
-            id: { type: "number" },
-            plate: { type: "string" },
-            model: { type: "string" },
-            capacity: { type: "number" },
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                plate: { type: "string" },
+                model: { type: "string" },
+                capacity: { type: "number" },
+              },
+            },
+          },
+        },
+        400: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
           },
         },
       },
@@ -75,8 +146,8 @@ export async function vanRoutes(app) {
   app.patch("/vans/:id", {
     preHandler: [app.authenticate, checkOwner, validate(updateVanSchema)],
     schema: {
-      summary: "Atualizar dados da van",
-      description: "Atualizar dados da van",
+      summary: "Update van details",
+      description: "Update van details",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
       body: {
@@ -87,6 +158,44 @@ export async function vanRoutes(app) {
           capacity: { type: "integer", minimum: 1 },
         },
       },
+      response: {
+        200: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            data: {
+              type: "object",
+              properties: {
+                id: { type: "number" },
+                plate: { type: "string" },
+                model: { type: "string" },
+                capacity: { type: "number" },
+              },
+            },
+          },
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+      },
     },
     handler: vanController.update,
   });
@@ -94,11 +203,41 @@ export async function vanRoutes(app) {
   app.delete("/vans/:id", {
     preHandler: [app.authenticate, checkOwner],
     schema: {
-      summary: "Excluir van pelo ID",
-      description: "Excluir van pelo ID",
+      summary: "Delete van by ID",
+      description: "Delete van by ID",
       tags: ["Vans"],
       params: { type: "object", properties: { id: { type: "number" } } },
-      response: { 204: { description: "Van deletada com sucesso" } },
+      response: {
+        204: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+          description: "Van deleted successfully",
+        },
+        403: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        404: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+        500: {
+          type: "object",
+          properties: {
+            success: { type: "boolean" },
+            message: { type: "string" },
+          },
+        },
+      },
     },
     handler: vanController.delete,
   });

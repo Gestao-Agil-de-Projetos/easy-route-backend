@@ -1,5 +1,5 @@
-import { routeService } from '../services/routeService.js';
-import http from '../http/responses.js';
+import { routeService } from "../services/routeService.js";
+import responses from "../http/responses.js";
 
 export const routeController = {
   async create(request, reply) {
@@ -8,10 +8,19 @@ export const routeController = {
       const data = request.body;
 
       const newRoute = await routeService.create(data, ownerId);
-      return http.created(reply, newRoute);
+      return responses.created(reply, { success: true, data: newRoute });
     } catch (error) {
-      if (error.message && error.message.includes('Permissão negada')) return http.forbidden(reply, { message: error.message });
-      return http.badRequest(reply, { message: error.message });
+      if (error.message && error.message.includes("Permission denied")) {
+        return responses.forbidden(reply, {
+          success: false,
+          message: error.message,
+        });
+      }
+
+      return responses.badRequest(reply, {
+        success: false,
+        message: error.message,
+      });
     }
   },
 
@@ -19,9 +28,20 @@ export const routeController = {
     try {
       const { id } = request.params;
       const route = await routeService.getById(id);
-      return http.ok(reply, route);
+
+      if (!route) {
+        return responses.notFound(reply, {
+          success: false,
+          message: "Route not found",
+        });
+      }
+
+      return responses.ok(reply, { success: true, data: route });
     } catch (error) {
-      return http.notFound(reply, { message: error.message });
+      return responses.notFound(reply, {
+        success: false,
+        message: error.message,
+      });
     }
   },
 
@@ -29,11 +49,21 @@ export const routeController = {
     try {
       const { van_id } = request.params;
       const ownerId = request.user.id;
+
       const routes = await routeService.getAllByVan(van_id, ownerId);
-      return http.ok(reply, routes);
+      return responses.ok(reply, { success: true, data: routes });
     } catch (error) {
-      if (error.message && error.message.includes('Permissão negada')) return http.forbidden(reply, { message: error.message });
-      return http.notFound(reply, { message: error.message });
+      if (error.message && error.message.includes("Permission denied")) {
+        return responses.forbidden(reply, {
+          success: false,
+          message: error.message,
+        });
+      }
+
+      return responses.notFound(reply, {
+        success: false,
+        message: error.message,
+      });
     }
   },
 
@@ -44,23 +74,27 @@ export const routeController = {
       const ownerId = request.user.id;
 
       const updated = await routeService.update(id, data, ownerId);
-      return http.ok(reply, updated);
-    } catch (error) {
-      if (error.message && error.message.includes('Permissão negada')) return http.forbidden(reply, { message: error.message });
-      return http.notFound(reply, { message: error.message });
-    }
-  },
 
-  async delete(request, reply) {
-    try {
-      const { id } = request.params;
-      const ownerId = request.user.id;
+      if (!updated) {
+        return responses.notFound(reply, {
+          success: false,
+          message: "Route not found",
+        });
+      }
 
-      await routeService.delete(id, ownerId);
-      return http.deleted(reply);
+      return responses.ok(reply, { success: true, data: updated });
     } catch (error) {
-      if (error.message && error.message.includes('Permissão negada')) return http.forbidden(reply, { message: error.message });
-      return http.notFound(reply, { message: error.message });
+      if (error.message && error.message.includes("Permission denied")) {
+        return responses.forbidden(reply, {
+          success: false,
+          message: error.message,
+        });
+      }
+
+      return responses.notFound(reply, {
+        success: false,
+        message: error.message,
+      });
     }
   },
 };
