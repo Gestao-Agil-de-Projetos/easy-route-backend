@@ -17,6 +17,27 @@ node ./src/server.js
 
 Certifique-se de configurar corretamente o arquivo .env apontando para o banco de dados.
 
+### Rodando via Docker Compose
+
+```bash
+docker compose up --build
+```
+
+A primeira vez pode demorar pois o Docker vai construir a imagem do app e criar o volume do MySQL.
+Para parar e remover containers, rede e volumes associados:
+
+```bash
+docker compose down -v
+```
+
+### Rodando localmente no Node.js
+
+```bash
+docker build -t easy-route-backend ./easy-route-backend  # Build da imagem
+
+docker run --name easy-route-backend-app --env-file .env -p 7000:7000 easy-route-backend # Rodar a aplicação
+```
+
 ## 2. Estrutura do Projeto
 
 Abaixo está uma visão geral das pastas e arquivos principais do **easy-route-backend** e suas funções:
