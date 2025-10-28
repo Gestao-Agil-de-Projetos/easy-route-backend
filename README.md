@@ -6,30 +6,7 @@ Este repositório contém a API backend da aplicação **Easy Route**, construí
 
 ## 1. Como rodar a aplicação
 
-### 1️⃣ Rodando com Docker Compose
-
-Sobe **a aplicação e o banco MySQL** juntos:
-
-```bash
-docker compose up -d
-```
-
-Parar os containers:
-
-```bash
-docker compose down
-```
-
-### 2️⃣ Rodando apenas a aplicação via Docker
-
-Se você já possui o MySQL ativo:
-
-```bash
-docker build -t easy-route-backend-app .
-docker run -p 3000:3000 --env-file .env easy-route-backend-app
-```
-
-### 3️⃣ Rodando localmente no Node.js
+### Rodando localmente no Node.js
 
 ```bash
 npm install
