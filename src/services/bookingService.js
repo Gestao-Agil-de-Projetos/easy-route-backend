@@ -20,6 +20,18 @@ export const bookingService = {
     return booking;
   },
 
+  async getLatestWithoutAssessment(user_id) {
+    const booking = await bookingRepository.findLatestWithoutAssessment(
+      user_id
+    );
+
+    if (!booking) return null;
+
+    return {
+      ...booking,
+    };
+  },
+
   async getAll(tripId, ownerId) {
     const trip = await tripRepository.findById(tripId);
 
@@ -52,4 +64,3 @@ export const bookingService = {
     return bookingRepository.updateWithStopPoint(id, data);
   },
 };
-

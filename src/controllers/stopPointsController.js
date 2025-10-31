@@ -25,13 +25,6 @@ export const stopPointsController = {
         Number(user.id)
       );
 
-      if (!result) {
-        return responses.notFound(reply, {
-          success: false,
-          message: "StopPoint not found",
-        });
-      }
-
       return responses.ok(reply, { success: true, data: result });
     } catch (err) {
       return responses.badRequest(reply, {

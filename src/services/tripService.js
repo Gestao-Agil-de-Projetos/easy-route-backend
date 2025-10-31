@@ -34,30 +34,12 @@ export const tripService = {
     return tripRepository.findNearby(latitude, longitude, radius);
   },
 
-  async getExactTrips({
-    start_latitude,
-    start_longitude,
-    end_latitude,
-    end_longitude,
-    date,
-  }) {
-    if (
-      start_latitude == null ||
-      start_longitude == null ||
-      end_latitude == null ||
-      end_longitude == null ||
-      date == null
-    ) {
-      throw new Error("All coordinates are required.");
+  async getExactTrips({ start_name, end_name, date }) {
+    if (start_name == null || end_name == null || date == null) {
+      throw new Error("All fields are required.");
     }
 
-    return tripRepository.findExact(
-      start_latitude,
-      start_longitude,
-      end_latitude,
-      end_longitude,
-      date
-    );
+    return tripRepository.findExact(start_name, end_name, date);
   },
 
   async getTripsByOwnerAndStatus(userId, statusArray) {

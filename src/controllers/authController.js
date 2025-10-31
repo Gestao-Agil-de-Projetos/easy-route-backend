@@ -32,10 +32,7 @@ export const authController = {
           errors: err.errors,
         });
       }
-      return responses.unauthenticated(reply, {
-        success: false,
-        message: err.message,
-      });
+      return responses.unauthenticated(reply, err.message);
     }
   },
 };

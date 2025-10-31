@@ -242,17 +242,10 @@ export async function tripRoutes(app) {
       tags: ["Trip"],
       querystring: {
         type: "object",
-        required: [
-          "start_latitude",
-          "start_longitude",
-          "end_latitude",
-          "end_longitude",
-        ],
+        required: ["start_name", "end_name"],
         properties: {
-          start_latitude: { type: "number" },
-          start_longitude: { type: "number" },
-          end_latitude: { type: "number" },
-          end_longitude: { type: "number" },
+          start_name: { type: "string" },
+          end_name: { type: "string" },
           date: {
             type: "string",
             format: "date",
@@ -286,6 +279,13 @@ export async function tripRoutes(app) {
                       start_longitude: { type: "number" },
                       end_latitude: { type: "number" },
                       end_longitude: { type: "number" },
+                      start_name: { type: "string" },
+                      end_name: { type: "string" },
+                      van: {
+                        user: {
+                          name: { type: "string" },
+                        },
+                      },
                     },
                   },
                 },

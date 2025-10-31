@@ -8,9 +8,17 @@ export const bookingRepository = {
       const trip = await tx.trip.findFirst({
         where: { id: tripId },
         orderBy: { start_time: "asc" },
+        include: {
+          route: true,
+        },
       });
 
       if (!trip) throw new Error("No trip found for this route.");
+
+      if (!trip.route.is_active) throw new Error("The Route is not active.");
+
+      if (trip.status !== "SCHEDULED")
+        throw new Error("The trip is no longer accepting reservations.");
 
       if (trip.available_seats === 0)
         throw new Error("No more available seats.");
@@ -39,6 +47,39 @@ export const bookingRepository = {
       });
 
       return { booking, stopPoint: createdStopPoint };
+    });
+  },
+
+  async findLatestWithoutAssessment(user_id) {
+    return prisma.booking.findFirst({
+      where: {
+        user_id,
+        status: "FINISHED",
+        Assessment: {
+          none: {},
+        },
+        trip: {
+          status: "FINISHED",
+        },
+      },
+      include: {
+        trip: {
+          include: {
+            route: {
+              include: {
+                van: {
+                  include: {
+                    owner: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
     });
   },
 

@@ -18,7 +18,7 @@ services:
 
   app:
     build:
-      context: ./easy-route-backend
+      context: .
       args:
         NODE_ENV: ${NODE_ENV}
     container_name: easy-route-backend-app

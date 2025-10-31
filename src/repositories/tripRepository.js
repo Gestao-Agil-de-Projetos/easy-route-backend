@@ -43,7 +43,12 @@ export const tripRepository = {
   async findNearby(latitude, longitude, radius = 0.25) {
     return prisma.trip.findMany({
       where: {
+        start_time: {
+          gte: new Date(),
+        },
+        status: "SCHEDULED",
         route: {
+          is_active: true,
           start_latitude: {
             gte: latitude - radius,
             lte: latitude + radius,
@@ -60,16 +65,9 @@ export const tripRepository = {
     });
   },
 
-  async findExact(
-    start_latitude,
-    start_longitude,
-    end_latitude,
-    end_longitude,
-    date
-  ) {
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-
+  async findExact(start_name, end_name, date) {
+    const [year, month, day] = date.split("-");
+    const dayStart = new Date(year, month - 1, day, 0, 0, 0, 0);
     const dayEnd = new Date(dayStart);
     dayEnd.setDate(dayEnd.getDate() + 1);
 
@@ -79,15 +77,23 @@ export const tripRepository = {
           gte: dayStart,
           lt: dayEnd,
         },
+        status: "SCHEDULED",
         route: {
-          start_latitude,
-          start_longitude,
-          end_latitude,
-          end_longitude,
+          is_active: true,
+          start_name,
+          end_name,
         },
       },
       include: {
-        route: true,
+        route: {
+          include: {
+            van: {
+              include: {
+                owner: true,
+              },
+            },
+          },
+        },
       },
     });
   },

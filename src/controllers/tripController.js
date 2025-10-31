@@ -29,13 +29,6 @@ export const tripController = {
       const { id } = request.params;
       const trip = await tripService.getById(id);
 
-      if (!trip) {
-        return responses.notFound(reply, {
-          success: false,
-          message: "Trip not found",
-        });
-      }
-
       return responses.ok(reply, { success: true, data: trip });
     } catch (error) {
       return responses.notFound(reply, {
@@ -49,13 +42,6 @@ export const tripController = {
     try {
       const { user_id } = request.params;
       const trip = await tripService.getByUserId(user_id);
-
-      if (!trip) {
-        return responses.notFound(reply, {
-          success: false,
-          message: "Trip not found",
-        });
-      }
 
       return responses.ok(reply, { success: true, data: trip });
     } catch (error) {
@@ -87,19 +73,11 @@ export const tripController = {
 
   async getByRouteCoordinates(req, reply) {
     try {
-      const {
-        start_latitude,
-        start_longitude,
-        end_latitude,
-        end_longitude,
-        date,
-      } = req.query;
+      const { start_name, end_name, date } = req.query;
 
       const trips = await tripService.getExactTrips({
-        start_latitude: Number(start_latitude),
-        start_longitude: Number(start_longitude),
-        end_latitude: Number(end_latitude),
-        end_longitude: Number(end_longitude),
+        start_name,
+        end_name,
         date,
       });
 

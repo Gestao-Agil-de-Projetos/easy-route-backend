@@ -25,9 +25,26 @@ export const bookingController = {
         });
       }
 
+      return responses.badRequest(reply, {
+        success: false,
+        message: err.message,
+      });
+    }
+  },
+
+  async getLatestWithoutAssessment(request, reply) {
+    try {
+      const user_id = request.user.id;
+      const result = await bookingService.getLatestWithoutAssessment(user_id);
+
+      return responses.ok(reply, {
+        success: true,
+        data: result,
+      });
+    } catch (err) {
       return responses.internalServerError(reply, {
         success: false,
-        message: err.message || "Internal server error",
+        message: err.message,
       });
     }
   },
@@ -56,13 +73,6 @@ export const bookingController = {
 
       const result = await bookingService.getById(Number(id), user_id);
 
-      if (!result) {
-        return responses.notFound(reply, {
-          success: false,
-          message: "Booking not found",
-        });
-      }
-
       return responses.ok(reply, {
         success: true,
         data: result,
@@ -85,13 +95,6 @@ export const bookingController = {
         : null;
 
       const result = await bookingService.getByUserId(user_id, statuses);
-
-      if (!result || result.length === 0) {
-        return responses.notFound(reply, {
-          success: false,
-          message: "No bookings found",
-        });
-      }
 
       return responses.ok(reply, {
         success: true,

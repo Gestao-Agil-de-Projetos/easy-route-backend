@@ -58,12 +58,6 @@
           "items": {
             "$ref": "#/definitions/Van"
           }
-        },
-        "Assessment": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Assessment"
-          }
         }
       }
     },
@@ -123,11 +117,17 @@
             "FLEXIBLE"
           ]
         },
+        "start_name": {
+          "type": "string"
+        },
         "start_latitude": {
           "type": "number"
         },
         "start_longitude": {
           "type": "number"
+        },
+        "end_name": {
+          "type": "string"
         },
         "end_latitude": {
           "type": "number"
@@ -279,6 +279,12 @@
           "items": {
             "$ref": "#/definitions/StopPoint"
           }
+        },
+        "Assessment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Assessment"
+          }
         }
       }
     },
@@ -304,8 +310,8 @@
         "trip": {
           "$ref": "#/definitions/Trip"
         },
-        "user": {
-          "$ref": "#/definitions/User"
+        "booking": {
+          "$ref": "#/definitions/Booking"
         }
       }
     }
