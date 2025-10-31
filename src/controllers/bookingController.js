@@ -87,8 +87,9 @@ export const bookingController = {
       const result = await bookingService.getByUserId(user_id, statuses);
 
       if (!result || result.length === 0) {
-        return responses.notFound(reply, {
-          success: false,
+        return responses.ok(reply, {
+          success: true,
+          data: [],
           message: "No bookings found",
         });
       }
