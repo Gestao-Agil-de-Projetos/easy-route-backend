@@ -100,6 +100,18 @@ export async function bookingRoutes(app) {
                       },
                     },
                   },
+                  assessment: {
+                    type: "object",
+                    nullable: true,
+                    properties: {
+                      id: { type: "number" },
+                      rating: { type: "number" },
+                      feedback: { type: "string" },
+                      created_at: { type: "string" },
+                      trip_id: { type: "number" },
+                      booking_id: { type: "number" },
+                    },
+                  },
                 },
               },
             },

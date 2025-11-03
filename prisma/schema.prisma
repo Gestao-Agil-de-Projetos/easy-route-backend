@@ -63,22 +63,21 @@ model Route {
 }
 
 model Trip {
-  id                 Int        @id @default(autoincrement())
+  id                 Int          @id @default(autoincrement())
   start_time         DateTime
   estimated_end_time DateTime
   total_seats        Int
   available_seats    Int
   price              Decimal
-  status             TripStatus @default(SCHEDULED)
+  status             TripStatus   @default(SCHEDULED)
   route_id           Int
+  route              Route        @relation(fields: [route_id], references: [id], onDelete: Cascade)
   bookings           Booking[]
-  route              Route      @relation(fields: [route_id], references: [id], onDelete: Cascade)
-  stop_points     StopPoint[]
+  stop_points        StopPoint[]
+  assessments        Assessment[]
 
   @@index([route_id], map: "Trip_route_id_fkey")
-  Assessment Assessment[]
 }
-
 model StopPoint {
   id             Int     @id @default(autoincrement())
   sequence_order Int?
@@ -94,34 +93,35 @@ model StopPoint {
 }
 
 model Booking {
-  booking_id       Int           @id @default(autoincrement())
-  status           BookingStatus @default(PENDING)
-  created_at       DateTime      @default(now())
-  trip_id          Int
-  user_id          Int
-  trip             Trip          @relation(fields: [trip_id], references: [id], onDelete: Cascade)
-  user             User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  booking_id           Int             @id @default(autoincrement())
+  status       BookingStatus   @default(PENDING)
+  created_at   DateTime        @default(now())
+  trip_id      Int
+  user_id      Int
 
-  @@index([trip_id], map: "Booking_trip_id_fkey")
-  @@index([user_id], map: "Booking_user_id_fkey")
-  StopPoint StopPoint[]
-  Assessment Assessment[]
+  trip         Trip            @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  user         User            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  stop_points  StopPoint[]
+
+  assessment   Assessment?     @relation("BookingToAssessment")
+
+  @@index([trip_id])
+  @@index([user_id])
 }
 
 model Assessment {
-  id        Int      @id @default(autoincrement())
-  rating    Int      @db.TinyInt
-  feedback  String?
-  created_at DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  rating      Int      @db.TinyInt
+  feedback    String?
+  created_at  DateTime @default(now())
 
-  trip_id   Int
-  booking_id   Int
+  trip_id     Int
+  booking_id  Int      @unique
 
-  trip      Trip     @relation(fields: [trip_id], references: [id], onDelete: Cascade)
-  booking      Booking     @relation(fields: [booking_id], references: [booking_id], onDelete: Cascade)
+  trip        Trip     @relation(fields: [trip_id], references: [id], onDelete: Cascade)
+  booking     Booking  @relation("BookingToAssessment", fields: [booking_id], references: [booking_id], onDelete: Cascade)
 
   @@index([trip_id])
-  @@index([booking_id])
 }
 
 enum Role {

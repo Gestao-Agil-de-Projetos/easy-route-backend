@@ -18,6 +18,7 @@ import { tripRoutes } from "./routes/tripRoutes.js";
 import { stopPointsRoutes } from "./routes/stopPointsRoutes.js";
 import { bookingRoutes } from "./routes/bookingRoutes.js";
 import { optimizeRouteRoutes } from "./routes/optimizeRouteRoutes.js";
+import { assessmentRoutes } from "./routes/assessmentRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -91,5 +92,6 @@ app.register(tripRoutes);
 app.register(optimizeRouteRoutes);
 app.register(stopPointsRoutes);
 app.register(bookingRoutes);
+app.register(assessmentRoutes);
 
 export { app };

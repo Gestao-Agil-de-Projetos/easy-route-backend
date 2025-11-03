@@ -114,6 +114,7 @@ export const bookingRepository = {
     return prisma.booking.findMany({
       where: whereCondition,
       include: {
+        assessment: true,
         trip: {
           include: {
             route: {

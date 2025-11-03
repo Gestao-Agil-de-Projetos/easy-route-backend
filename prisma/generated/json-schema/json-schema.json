@@ -193,14 +193,14 @@
             "CANCELLED"
           ]
         },
+        "route": {
+          "$ref": "#/definitions/Route"
+        },
         "bookings": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Booking"
           }
-        },
-        "route": {
-          "$ref": "#/definitions/Route"
         },
         "stop_points": {
           "type": "array",
@@ -208,7 +208,7 @@
             "$ref": "#/definitions/StopPoint"
           }
         },
-        "Assessment": {
+        "assessments": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Assessment"
@@ -274,17 +274,21 @@
         "user": {
           "$ref": "#/definitions/User"
         },
-        "StopPoint": {
+        "stop_points": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/StopPoint"
           }
         },
-        "Assessment": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Assessment"
-          }
+        "assessment": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Assessment"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },

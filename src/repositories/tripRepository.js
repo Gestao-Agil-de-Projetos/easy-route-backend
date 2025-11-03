@@ -135,7 +135,21 @@ export const tripRepository = {
   },
 
   async update(id, data) {
-    return prisma.trip.update({ where: { id: Number(id) }, data });
+    return prisma.$transaction(async (tx) => {
+      const updatedTrip = await tx.trip.update({
+        where: { id: Number(id) },
+        data,
+      });
+
+      if (data.status === "FINISHED" || data.status === "CANCELLED") {
+        await tx.booking.updateMany({
+          where: { trip_id: updatedTrip.id },
+          data: { status: data.status },
+        });
+      }
+
+      return updatedTrip;
+    });
   },
 
   async findWithVanAndStopPoints(id) {
