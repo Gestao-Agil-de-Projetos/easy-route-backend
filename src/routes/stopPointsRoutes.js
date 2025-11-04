@@ -1,9 +1,9 @@
 import { stopPointsController } from "../controllers/stopPointsController.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 
 export async function stopPointsRoutes(app) {
   app.get("/stoppoints/:trip_id", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       tags: ["StopPoints"],
       summary: "List all stop points",
@@ -50,7 +50,7 @@ export async function stopPointsRoutes(app) {
   });
 
   app.get("/stoppoints/:id/by-id", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       tags: ["StopPoints"],
       summary: "Get a stop point by ID",

@@ -1,5 +1,5 @@
 import { routeController } from "../controllers/routeController.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import {
   createRouteSchema,
@@ -114,7 +114,7 @@ export async function routeRoutes(app) {
   });
 
   app.post("/routes", {
-    preHandler: [app.authenticate, checkOwner, validate(createRouteSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(createRouteSchema)],
     schema: {
       summary: "Create a new route",
       description: "Create a new route",
@@ -182,7 +182,7 @@ export async function routeRoutes(app) {
   });
 
   app.patch("/routes/:id", {
-    preHandler: [app.authenticate, checkOwner, validate(updateRouteSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(updateRouteSchema)],
     schema: {
       summary: "Update an existing route",
       description: "Update an existing route",

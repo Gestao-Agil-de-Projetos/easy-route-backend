@@ -3,7 +3,7 @@ import {
   createBookingSchema,
   updateBookingSchema,
 } from "../validation/booking-validation.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 
 export async function bookingRoutes(app) {
@@ -139,7 +139,7 @@ export async function bookingRoutes(app) {
   });
 
   app.get("/bookings/:trip_id", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       tags: ["Booking"],
       summary: "List all bookings for a trip",

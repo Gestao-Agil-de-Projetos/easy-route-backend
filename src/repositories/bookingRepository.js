@@ -55,8 +55,8 @@ export const bookingRepository = {
       where: {
         user_id,
         status: "FINISHED",
-        Assessment: {
-          none: {},
+        assessment: {
+          is: null,
         },
         trip: {
           status: "FINISHED",

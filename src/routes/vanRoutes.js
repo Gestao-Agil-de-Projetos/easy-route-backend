@@ -1,5 +1,5 @@
 import { vanController } from "../controllers/vanController.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import {
   createVanSchema,
@@ -8,7 +8,7 @@ import {
 
 export async function vanRoutes(app) {
   app.get("/vans", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       summary: "List all vans of the owner",
       description: "List all vans of the owner",
@@ -87,7 +87,7 @@ export async function vanRoutes(app) {
   });
 
   app.post("/vans", {
-    preHandler: [app.authenticate, checkOwner, validate(createVanSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(createVanSchema)],
     schema: {
       summary: "Create a new van",
       description: "Create a new van",
@@ -144,7 +144,7 @@ export async function vanRoutes(app) {
   });
 
   app.patch("/vans/:id", {
-    preHandler: [app.authenticate, checkOwner, validate(updateVanSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(updateVanSchema)],
     schema: {
       summary: "Update van details",
       description: "Update van details",
@@ -201,7 +201,7 @@ export async function vanRoutes(app) {
   });
 
   app.delete("/vans/:id", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       summary: "Delete van by ID",
       description: "Delete van by ID",

@@ -1,5 +1,5 @@
 import { tripController } from "../controllers/tripController.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import {
   createTripSchema,
@@ -308,7 +308,7 @@ export async function tripRoutes(app) {
   });
 
   app.get("/trips/by-owner", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       summary: "List trips by owner and status",
       description:
@@ -377,7 +377,7 @@ export async function tripRoutes(app) {
   });
 
   app.post("/trips", {
-    preHandler: [app.authenticate, checkOwner, validate(createTripSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(createTripSchema)],
     schema: {
       summary: "Create a new trip",
       description: "Create a new trip",
@@ -437,7 +437,7 @@ export async function tripRoutes(app) {
   });
 
   app.patch("/trips/:id", {
-    preHandler: [app.authenticate, checkOwner, validate(updateTripSchema)],
+    preHandler: [app.authenticate, hasRole(["OWNER"]), validate(updateTripSchema)],
     schema: {
       summary: "Update a trip",
       description: "Update a trip",

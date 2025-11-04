@@ -1,9 +1,9 @@
 import { optimizeRouteController } from "../controllers/optimizeRouteController.js";
-import { checkOwner } from "../middlewares/auth.js";
+import { hasRole } from "../middlewares/auth.js";
 
 export async function optimizeRouteRoutes(app) {
   app.post("/trips/:trip_id/optimize", {
-    preHandler: [app.authenticate, checkOwner],
+    preHandler: [app.authenticate, hasRole(["OWNER"])],
     schema: {
       summary: "Optimize the route based on stops and distances",
       description: "Optimize the route based on stops and distances",
