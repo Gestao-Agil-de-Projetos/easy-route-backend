@@ -1,5 +1,4 @@
 import { assessmentController } from "../controllers/assessmentController.js";
-import { checkOwner } from "../middlewares/auth.js";
 import { validate } from "../middlewares/validate.js";
 import { assessmentSchema } from "../validation/assessment-validation.js";
 
